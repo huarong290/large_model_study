@@ -1,0 +1,18 @@
+server:
+  port: 10001
+
+langchain4j:
+  # 本地 Ollama 配置
+  ollama:
+    chat-model:
+      base-url: http://localhost:11434
+      model-name: deepseek-r1:14b
+
+  # OpenAI 配置（统一底座看到这个节点，就会自动去实例化 OpenAiChatModel）
+  open-ai:
+    chat-model:
+      api-key: demo
+      base-url: http://langchain4j.dev/demo/openai/v1
+      model-name: gpt-4o
+      log-requests: true
+      log-responses: true

@@ -1,0 +1,121 @@
+<dependencies>
+        <!-- ========================================== -->
+        <!-- 1. Spring Boot 基础底座 & 工具              -->
+        <!-- ========================================== -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+        <!-- ========================================== -->
+        <!-- 2. Spring AI 组件区                        -->
+        <!-- ========================================== -->
+        <!-- Spring AI - 本地 Ollama 支持 -->
+        <dependency>
+            <groupId>org.springframework.ai</groupId>
+            <artifactId>spring-ai-ollama-spring-boot-starter</artifactId>
+        </dependency>
+        <!-- [可选扩展] 如果你也想测试 Spring AI 对接 OpenAI 的能力，解开这个注释 -->
+        <!--
+        <dependency>
+            <groupId>org.springframework.ai</groupId>
+            <artifactId>spring-ai-openai-spring-boot-starter</artifactId>
+        </dependency>
+        -->
+
+        <!-- ========================================== -->
+        <!-- 3. LangChain4j 组件区                      -->
+        <!-- ========================================== -->
+        <!-- LangChain4j - 统一自动化配置底座 -->
+        <dependency>
+            <groupId>dev.langchain4j</groupId>
+            <artifactId>langchain4j-spring-boot-starter</artifactId>
+        </dependency>
+        <!-- LangChain4j - 本地 Ollama 驱动 -->
+        <dependency>
+            <groupId>dev.langchain4j</groupId>
+            <artifactId>langchain4j-ollama</artifactId>
+        </dependency>
+        <!-- LangChain4j - 云端 OpenAI 驱动 -->
+        <dependency>
+            <groupId>dev.langchain4j</groupId>
+            <artifactId>langchain4j-open-ai</artifactId>
+        </dependency>
+
+        <!-- ========================================== -->
+        <!-- 4. 单元测试（高频调优 Prompt 必备）          -->
+        <!-- ========================================== -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+
+
+    -- 聊天记忆表（示例）
+    CREATE TABLE IF NOT EXISTS chat_msg (
+        id BIGINT AUTO_INCREMENT PRIMARY KEY COMMENT '主键ID',
+        chat_id VARCHAR(64) NOT NULL COMMENT '会话ID',
+        message_type VARCHAR(20) NOT NULL COMMENT '消息类型：USER/AI',
+        content TEXT NOT NULL COMMENT '消息内容',
+    delete_flag         BIGINT UNSIGNED NOT NULL DEFAULT '0' COMMENT '删除标识',
+    create_by           VARCHAR(64)   NOT NULL DEFAULT 'admin',
+    create_time          DATETIME      NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    update_by           VARCHAR(64)   NOT NULL DEFAULT 'admin',
+    update_time         DATETIME      NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+        INDEX idx_chat_id (chat_id)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='聊天记忆表';
+
+
+ ----------------------------------
+     CREATE TABLE IF NOT EXISTS lost_item (
+         id BIGINT AUTO_INCREMENT PRIMARY KEY COMMENT '主键ID',
+         user_name VARCHAR(50) NOT NULL DEFAULT '' COMMENT '失主姓名',
+         phone VARCHAR(20) NOT NULL DEFAULT '' COMMENT '失主手机号',
+         lost_name VARCHAR(100) NOT NULL DEFAULT '' COMMENT '失物名称',
+         lost_date_time VARCHAR(100) NOT NULL DEFAULT '' COMMENT '丢失时间',
+         lost_location VARCHAR(200) NOT NULL DEFAULT '' COMMENT '丢失地址',
+         lost_description TEXT COMMENT '失物特征',
+         status INT NOT NULL DEFAULT 0 COMMENT '状态：0-登记 1-已找到 2-已归还',
+     delete_flag         BIGINT UNSIGNED NOT NULL DEFAULT '0' COMMENT '删除标识',
+     create_by           VARCHAR(64)   NOT NULL DEFAULT 'admin',
+     create_time          DATETIME      NOT NULL DEFAULT CURRENT_TIMESTAMP,
+     update_by           VARCHAR(64)   NOT NULL DEFAULT 'admin',
+     update_time         DATETIME      NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='失物登记表';
+
+     CREATE TABLE IF NOT EXISTS found_item (
+         id BIGINT AUTO_INCREMENT PRIMARY KEY COMMENT '主键ID',
+         finder_name VARCHAR(50) NOT NULL DEFAULT '' COMMENT '拾得人姓名',
+         finder_phone VARCHAR(20) NOT NULL DEFAULT '' COMMENT '拾得人手机号',
+         find_name VARCHAR(100) NOT NULL DEFAULT '' COMMENT '失物名称',
+         find_date_time VARCHAR(100) NOT NULL DEFAULT '' COMMENT '丢失时间',
+         find_location VARCHAR(200) NOT NULL DEFAULT '' COMMENT '丢失地址',
+         find_description TEXT COMMENT '物品特征',
+         status INT NOT NULL DEFAULT 0 COMMENT '状态：0-登记 1-已找到 2-已归还',
+     delete_flag         BIGINT UNSIGNED NOT NULL DEFAULT '0' COMMENT '删除标识',
+     create_by           VARCHAR(64)   NOT NULL DEFAULT 'admin',
+     create_time          DATETIME      NOT NULL DEFAULT CURRENT_TIMESTAMP,
+     update_by           VARCHAR(64)   NOT NULL DEFAULT 'admin',
+     update_time         DATETIME      NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='招领登记表';
+
+         CREATE TABLE IF NOT EXISTS chat_his_msg (
+             id BIGINT AUTO_INCREMENT PRIMARY KEY COMMENT '主键ID',
+             chat_id VARCHAR(64) NOT NULL DEFAULT ''  COMMENT '会话ID',
+             message VARCHAR(6000) NOT NULL DEFAULT ''  COMMENT '消息内容',
+            role_type VARCHAR(10) NOT NULL DEFAULT ''  COMMENT 'User-用户消息 AI-LLM 返回消息',
+         delete_flag         BIGINT UNSIGNED NOT NULL DEFAULT '0' COMMENT '删除标识',
+         create_by           VARCHAR(64)   NOT NULL DEFAULT 'admin',
+         create_time          DATETIME      NOT NULL DEFAULT CURRENT_TIMESTAMP,
+         update_by           VARCHAR(64)   NOT NULL DEFAULT 'admin',
+         update_time         DATETIME      NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+             INDEX idx_chat_id (chat_id)
+         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='对话历史表';

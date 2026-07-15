@@ -1,0 +1,42 @@
+server:
+  port: 10006
+langchain4j:
+  # ==========================================
+  # 一、本地 Ollama 配置
+  # ==========================================
+  ollama:
+    chat-model:
+      base-url: http://localhost:11434
+      model-name: deepseek-r1:14b  # 你的常规模型
+      temperature: 0.8
+      timeout: 60s
+    streaming-chat-model:         # 支持流式输出的模型配置
+      base-url: http://localhost:11434
+      model-name: qwen2.5-coder:14b         # 一个支持流式的模型
+      temperature: 0.8
+  # OpenAI 配置（云端）
+  open-ai:
+    chat-model:
+      # DeepSeek API Key 从环境变量读取，不要硬编码
+      api-key: sk-d9acf81847274fcfb8cbfe0f20051ffd
+      # DeepSeek 的 API 端点
+      base-url: https://api.deepseek.com
+      # 旧的模型别名 deepseek-chat 和 deepseek-reasoner 将在 2026年7月24日 停止使用 最新的 deepseek-v4-flash 或 deepseek-v4-pro
+      model-name: deepseek-v4-flash
+      temperature: 0.7
+      timeout: 60s
+      log-requests: true
+      log-responses: true
+#    streaming-chat-model:         # 支持流式输出的模型配置
+#      # DeepSeek API Key 从环境变量读取，不要硬编码
+#      api-key: sk-d9acf81847274fcfb8cbfe0f20051ffd
+#      # DeepSeek 的 API 端点
+#      base-url: https://api.deepseek.com
+#      # 旧的模型别名 deepseek-chat 和 deepseek-reasoner 将在 2026年7月24日 停止使用 最新的 deepseek-v4-flash 或 deepseek-v4-pro
+#      model-name: deepseek-v4-flash
+#      temperature: 0.8
+#      log-requests: true
+#      log-responses: true
+logging:
+  level:
+    dev.langchain4j: DEBUG

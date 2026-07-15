@@ -1,0 +1,178 @@
+一、AI Agent 基础概念和理论
+学习目标：
+    理解AI Agent的基本概念
+    了解AI Agent的不同分类方法和主要类型
+    掌握AI Agent的核心组成部分以及基本策略
+    认识AI Agent在不同场景下的典型应用
+
+1.AI Agent基本概念
+在《人工智能》一书中将理性智能体（rational agent）的概念确定为研究人工智能的方法和核心。并且给出了一个agent宽泛的定义：
+任何通过传感器(sensor)感知环境(environment)并通过执行器(actuator)作用于该环境的事物都可以被视为智能体（agent）.
+
+比如：
+    自动驾驶
+    扫地机器人
+    游戏中的人机
+    AI英语教练
+
+我们现在要讨论的是基于LLM的智能体，是智能体技术演变的最新的阶段。
+
+
+2.AI Agent分类
+基于智能水平、决策过程
+    简单反射智能体：这些智能体根据当前环境的状态采取行动，并通过一组预定义的规则作出决策
+    基于模型的反射智能体：这些智能体维护着一个内部世界模型，使他们能够考虑过去的行为并预测未来的状态
+    基于目标的智能体：这些智能体在工作时会考虑特定的目标
+    基于效用的智能体：这些智能体会考虑不同的结果以及它们发生的可能性，最终选择能够最大程度发挥其效用或利益的行动
+    学习型智能体：这些智能体可以通过从环境和经验中学习来提高其性能
+
+ 基于互动
+    互动式合作伙伴(也称为表面智能体)
+    自主后台处理(也称为后台智能体)
+
+ 基于数量
+    单个智能体
+    多智能体
+
+  Agent = Large Model + Memory +Active Planning +Tool Use
+
+ 3.AI Agent的组成和策略
+ 规划
+    思维连(cot,2022)指示模型逐步思考，以利用更多测试时计算将复杂任务分解更小，更简单的步骤。Cot将大任务转化为多个可管理的任务，并阐明模型思维过程的解释
+    思维树(tot,2023)通过在每一步探索多种推理可能性
+
+  记忆
+              sensory memory
+    memory    short-term memory
+              long-term memory
+
+    感觉记忆：作为原始输入的学习嵌入表示，包括文本、图像或其他模态
+    短期记忆：作为情景学习，由于收到transformer有限上下文窗口长度的限制，既短又有限
+    长期记忆：作为智能体在查询时可以关注的外部向量存储，可通过快速检索访问
+  工具
+
+ 4 AI Agent用例场景
+
+ 客户服务智能体
+ HR服务智能体
+ 创意服务智能体
+ 数据智能体
+ 代码服务智能体
+
+ 二、AI Agent核心技术细节
+ 学习目标；
+    掌握openAI兼容API的核心用法
+    能够独立定义，描述并让LLM使用Tools(Function Calling)
+    理解并初步实现Agent的核心循环(结合ReAct思想)
+    掌握基础的Agent对话记忆能力
+2.1 openAI 兼容API接口
+环境准备
+    pip install openai
+###
+  from openai import OpenAI
+
+  # 只要 base_url 写对，api_key 随便填一个字符串就行
+  client = OpenAI(
+      base_url="http://localhost:11434/v1",
+      api_key="ollama"
+  )
+
+  # 2. 调用模型
+  completion = client.chat.completions.create(
+  ##  注意：DeepSeek 的模型名称建议使用 deepseek-chat 或 deepseek-reasoner
+      model="deepseek-r1:14b",
+
+      ## 发送对话
+      messages=[
+          ## 系统设定
+          {"role": "system", "content": "回复内容等于10个字符"},
+          ## 用户的问题
+          {"role": "user", "content": "你是谁"}
+      ],
+      stream=False
+  )
+###
+    # 3. 输出结果
+  print(completion.choices[0].message.content)
+  message对象
+  与LLM的对话是通过消息Message进行的，每个消息都是一个字典，包含一下关键信息
+    role(角色)：消息的发送者角色
+        "user"(用户):代表用户的消息，即我们向大模型LLM提出的问题或指令
+         "assistant"(AI助手):代表AI助手的消息 即是LLM给出的回复
+         "system"(系统):代表给LLM的设定，如角色，性格或其他要求
+
+    content(内容)：消息的具体文本内容即对话内容
+  温度参数
+  温度可以控制LLM生成文本的创造性和随机性，范围0-2，默认为1
+  越接近0:生成的文本更保守，重复性高，更倾向于选择最有可能的token，。适合需要准确性和一致性的任务如事实，代码，数学相关等
+  越接近2:生成的文本更创新、发散、重复性低，更倾向于选择不太常见但仍合理的token。适合需要创造性和灵感的任务 如故事创作，头脑风暴等
+
+
+ 2.2 工具的定义和使用
+    准备工作：
+        1.确定LLM支持工具调用
+        2.定义工具函数
+        3.使用json描述函数的名字，参数，功能
+        4.封装LLM对话函数(自动发送函数描述，对话记录)
+        5.调用LLM，如果有工具调用请求，就按照请求调用工具，否则输出结果
+
+ 2.3 记忆机制与对话管理
+    在前面的实例中，为什么让大模型知道函数的执行结果如何使用，需要把完整的对话历史记录下来一起发送给大模型，这就是一种记忆的实现形式，其优点是代码简单，内容完整。不过DNA风格
+    当对于内容特别长时，即会增加LLM开销，降低效能，甚至会因为超过上下文长度限制而调用失败。
+
+    上下文长度计算
+        以deepseek为例，首先安装分词器，然后统计分词数量
+
+    滑动窗口
+        对message_history进行裁剪，仅保留system提示和最新的K个User提示
+
+
+    摘要记忆
+        利用LLM大模型的摘要能力，对此前对话进行总结，并替代完整的对话内容
+
+
+    其他管理机制
+        知识图谱记忆：将对话中的实体和关系提取出来存入知识图谱，agent可以查询图谱获取相关信息，适用于结构化知识的场景
+        向量数据库记忆：将对话分块，向量化存入向量数据库。当需要,将用户查询向量化，在数据库中进行相似度搜索，召回最相关的片段作为上下文。这是实现RAG的核心
+
+
+
+ 三、OpenAI Agent SDK框架实站
+ 学习目标：
+    了解常见的Agent开发框架和选择思路
+    OpenAI Agent SDK的特点和核心概念
+    配置兼容OPenAI接口作为Agent的驱动模型
+    OpenAI Agent SDK的具体用法及案例
+
+
+ 3.1 常见的Agent开发框架
+ 名称                         背景                                         star数据
+ LangGraph                   来自Agent经典框架LangChain
+ LlamaIndex                  曾经是RAG经典框架，现发力为Agent
+ Autogen                     背靠微软
+ AG2                         autogen创始人从Autogen v0.2分支而来
+ openAI Agents SDK           背靠OpenAI
+ PydanticAI                  背靠Pydantic团队
+ smolagents                  背靠HuggingFace
+ crewAI                      曾经给予Langchain,后来重构了
+ Atomic Agents               个人维护，作者在社区比较活跃
+
+ 选择思路：
+    快速上手：openAI Agents SDK / smolagents
+    小规模快速开发：crewAi/PydanticAi/Autogen/AG2
+    高级定制深度控制：Autogen/AG2/LangGraph(langchain)
+
+ 3.2 OpenAI Agent SDK特点
+ 设计原则：
+    1.具有足够的功能值得使用，但
+    2.开箱即用，并且可以自定义内部细节
+
+ 主要功能：
+    代理循环：内部代理循环，负责调用工具、将结果发送到LLM，并循环知道LLM完成
+    交接：在多个代理之间进行协调和委派到强大功能
+    护栏：与代理并行进行输入验证和检查，如果检查失败则提前中断
+    Python优先：使用内置语言功能来协调和链接代理，而不需要学习新的抽象概念
+    函数工具：将任何python函数转换为工具，并具有自动模式生成和Pydantic支持的验证
+    跟踪：内置跟踪功能支持可视化、调试和监控您的工作流程，并配合使用OpenAI的评估、微调和提炼工具套件
+
+

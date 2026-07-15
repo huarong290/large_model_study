@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lost.found.mapper.ChatHisMsgMapper">
+
+    <!-- ========================================== -->
+    <!-- 结果映射：实体类字段 ↔ 数据库表字段          -->
+    <!-- ========================================== -->
+    <resultMap id="BaseResultMap" type="com.lost.found.entity.ChatHisMsg">
+        <id property="id" column="id"/>
+        <result property="chatId" column="chat_id"/>
+        <result property="message" column="message"/>
+        <result property="roleType" column="role_type"/>
+        <result property="deleteFlag" column="delete_flag"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updateTime" column="update_time"/>
+    </resultMap>
+
+    <!-- ========================================== -->
+    <!-- 通用查询列                                   -->
+    <!-- ========================================== -->
+    <sql id="Base_Column_List">
+        id, chat_id, message, role_type, delete_flag,
+        create_by, create_time, update_by, update_time
+    </sql>
+
+    <!-- ========================================== -->
+    <!-- 基础 CRUD                                     -->
+    <!-- ========================================== -->
+
+    <!-- 根据ID查询 -->
+    <select id="selectById" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM chat_his_msg
+        WHERE id = #{id} AND delete_flag = 0
+    </select>
+
+    <!-- 查询所有（按创建时间倒序） -->
+    <select id="selectAll" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM chat_his_msg
+        WHERE delete_flag = 0
+        ORDER BY create_time DESC
+    </select>
+
+    <!-- ========================================== -->
+    <!-- 按会话查询                                   -->
+    <!-- ========================================== -->
+
+    <!-- 根据会话ID查询（按时间升序，保留对话顺序） -->
+    <select id="selectByChatId" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM chat_his_msg
+        WHERE chat_id = #{chatId} AND delete_flag = 0
+        ORDER BY create_time ASC
+    </select>
+
+    <!-- 根据会话ID查询最近N条消息（按时间降序） -->
+    <select id="selectRecentByChatId" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM chat_his_msg
+        WHERE chat_id = #{chatId} AND delete_flag = 0
+        ORDER BY create_time DESC
+        LIMIT #{limit}
+    </select>
+
+    <!-- 根据会话ID查询最后一条消息 -->
+    <select id="selectLastByChatId" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM chat_his_msg
+        WHERE chat_id = #{chatId} AND delete_flag = 0
+        ORDER BY create_time DESC
+        LIMIT 1
+    </select>
+
+    <!-- ========================================== -->
+    <!-- 按角色查询                                   -->
+    <!-- ========================================== -->
+
+    <!-- 根据角色类型查询 -->
+    <select id="selectByRoleType" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM chat_his_msg
+        WHERE role_type = #{roleType} AND delete_flag = 0
+        ORDER BY create_time DESC
+    </select>
+
+    <!-- 查询某个会话的 User 消息 -->
+    <select id="selectUserMessagesByChatId" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM chat_his_msg
+        WHERE chat_id = #{chatId} AND role_type = 'User' AND delete_flag = 0
+        ORDER BY create_time ASC
+    </select>
+
+    <!-- 查询某个会话的 AI 消息 -->
+    <select id="selectAIMessagesByChatId" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM chat_his_msg
+        WHERE chat_id = #{chatId} AND role_type = 'AI' AND delete_flag = 0
+        ORDER BY create_time ASC
+    </select>
+
+    <!-- ========================================== -->
+    <!-- 删除操作                                     -->
+    <!-- ========================================== -->
+
+    <!-- 物理删除（绕过逻辑删除，谨慎使用） -->
+    <delete id="physicalDeleteByChatId">
+        DELETE FROM chat_his_msg WHERE chat_id = #{chatId}
+    </delete>
+
+    <!-- 物理删除所有 -->
+    <delete id="physicalDeleteAll">
+        DELETE FROM chat_his_msg
+    </delete>
+
+</mapper>

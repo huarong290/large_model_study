@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>com.ai.study</groupId>
+        <artifactId>langchain4j-parent</artifactId>
+        <version>1.0-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>dljd-langchain4j-0005-prompt</artifactId>
+    <properties>
+        <!--        release 会同时锁定source、target版本值-->
+        <maven.compiler.release>25</maven.compiler.release>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+
+    <dependencies>
+        <!-- ========================================== -->
+        <!-- 一、 Spring Boot 基础底座                     -->
+        <!-- ========================================== -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-webflux</artifactId>
+        </dependency>
+        <!--  单元测试-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <!-- ========================================== -->
+        <!-- 二、 LangChain4j Spring Boot Starter (核心)提供 @AiService 注解、Spring 自动配置、代理生成   -->
+        <!-- ========================================== -->
+        <dependency>
+            <groupId>dev.langchain4j</groupId>
+            <artifactId>langchain4j-spring-boot-starter</artifactId>
+        </dependency>
+
+        <!-- ========================================== -->
+        <!-- 三、 LangChain4j 响应式支持：提供 Flux/Mono 适配                 -->
+        <!-- ========================================== -->
+        <dependency>
+            <groupId>dev.langchain4j</groupId>
+            <artifactId>langchain4j-reactor</artifactId>
+        </dependency>
+
+        <!-- ========================================== -->
+        <!-- 四、 LangChain4j Ollama Starter (本地模型)    -->
+        <!-- ========================================== -->
+        <dependency>
+            <groupId>dev.langchain4j</groupId>
+            <artifactId>langchain4j-ollama-spring-boot-starter</artifactId>
+        </dependency>
+        <!-- ========================================== -->
+        <!-- 五、 LangChain4j OpenAI Starter (云端模型) OpenAI/DeepSeek 等模型自动配置   -->
+        <!-- ========================================== -->
+        <dependency>
+            <groupId>dev.langchain4j</groupId>
+            <artifactId>langchain4j-open-ai-spring-boot-starter</artifactId>
+        </dependency>
+        <!-- ========================================== -->
+        <!-- 六、 工具类                                   -->
+        <!-- ========================================== -->
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
+
+</project>

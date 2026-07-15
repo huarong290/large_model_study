@@ -1,0 +1,10 @@
+server:
+  port: 10002
+langchain4j:
+  # 本地 Ollama 配置
+  ollama:
+    chat-model:
+      base-url: http://localhost:11434  # Ollama 服务地址
+      model-name: deepseek-r1:14b          # 或者你 pull 下来的任何模型，如 qwen2.5
+      temperature: 0.8
+      timeout: 60s
