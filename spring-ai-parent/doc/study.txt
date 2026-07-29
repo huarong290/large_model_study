@@ -1,0 +1,70 @@
+完整知识点覆盖清单
+分类	知识点	状态	模块号
+ChatClient核心	基础使用、参数配置、流式响应	✅	0001-0005
+提示词工程	Template、结构化输出	✅	0006-0007
+高级特性	记忆、RAG、工具调用	✅	0008-0010
+运维扩展	Advisor、可观测性	✅	0011-0012
+进阶特性	路由、缓存、安全、评估	✅	0013-0016
+实战项目	综合应用	✅	0017
+音频处理	语音转文字、文字转语音	🆕	0018-0019
+图像处理	生成、识别、多模态	🆕	0020-0021
+向量数据库	PGVector、Redis、Milvus	🆕	0022-0024
+批量并发	批处理、限流	🆕	0025-0026
+Agent	基础、多Agent、推理	🆕	0027-0029
+
+ 模块分类更清晰
+第一阶段：入门基础（3个）
+第二阶段：ChatClient 核心基础（5个）
+第三阶段：提示词工程（2个）
+第四阶段：高级特性（3个）
+第五阶段：运维与扩展（2个）
+第六阶段：进阶特性（4个）
+第七阶段：多模态与媒体处理（4个）
+第八阶段：向量数据库与存储（3个）
+第九阶段：批量处理与并发控制（2个）
+第十阶段：Agent与推理增强（3个）
+第十一阶段：模型微调与优化（2个）
+第十二阶段：国际化与多语言（2个）
+
+CREATE TABLE IF NOT EXISTS cw_ods_ip_risk_result (
+                                                     id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY COMMENT '自增主键',
+                                                     ip VARCHAR(45) NOT NULL COMMENT 'IP地址(支持IPv4与IPv6)',
+
+    -- ===== 网络维度 (Network) =====
+    provider VARCHAR(255) NOT NULL DEFAULT '' COMMENT '服务商 (network.provider)',
+    organisation VARCHAR(255) NOT NULL DEFAULT '' COMMENT '所属机构 (network.organisation)',
+    network_type VARCHAR(50) NOT NULL DEFAULT '' COMMENT '网络类型，如 Business/Residential (network.type)',
+
+    -- ===== 地理位置维度 (Location) =====
+    continent_name VARCHAR(100) NOT NULL DEFAULT '' COMMENT '大洲名称 (location.continent_name)',
+    continent_code VARCHAR(10) NOT NULL DEFAULT '' COMMENT '大洲代码 (location.continent_code)',
+    country_name VARCHAR(100) NOT NULL DEFAULT '' COMMENT '国家名称 (location.country_name)',
+    country_code VARCHAR(10) NOT NULL DEFAULT '' COMMENT '国家二字码，如 CN (location.country_code)',
+    region_name VARCHAR(100) NOT NULL DEFAULT '' COMMENT '省/州名称 (location.region_name)',
+    region_code VARCHAR(50) NOT NULL DEFAULT '' COMMENT '省/州代码 (location.region_code)',
+    city_name VARCHAR(100) NOT NULL DEFAULT '' COMMENT '城市名称 (location.city_name)',
+
+    -- ===== 安全检测维度 (Detections) =====
+    proxy_flag TINYINT UNSIGNED NOT NULL DEFAULT 0 COMMENT '是否代理 0:否 1:是 (detections.proxy)',
+    vpn_flag TINYINT UNSIGNED NOT NULL DEFAULT 0 COMMENT '是否VPN 0:否 1:是 (detections.vpn)',
+    compromised_flag TINYINT UNSIGNED NOT NULL DEFAULT 0 COMMENT '是否被入侵/僵尸网络 0:否 1:是 (detections.compromised)',
+    scraper_flag TINYINT UNSIGNED NOT NULL DEFAULT 0 COMMENT '是否爬虫 0:否 1:是 (detections.scraper)',
+    tor_flag TINYINT UNSIGNED NOT NULL DEFAULT 0 COMMENT '是否TOR节点 0:否 1:是 (detections.tor)',
+    hosting_flag TINYINT UNSIGNED NOT NULL DEFAULT 0 COMMENT '是否机房/托管 0:否 1:是 (detections.hosting)',
+    anonymous_flag TINYINT UNSIGNED NOT NULL DEFAULT 0 COMMENT '是否匿名 0:否 1:是 (detections.anonymous)',
+    risk_score TINYINT UNSIGNED NOT NULL DEFAULT 0 COMMENT '风险分值 0-100 (detections.risk)',
+    confidence_score TINYINT UNSIGNED NOT NULL DEFAULT 0 COMMENT '检测置信度 0-100 (detections.confidence)',
+
+    -- ===== 审计与时间列 =====
+    `create_by` varchar(100) NOT NULL DEFAULT '' COMMENT '创建人',
+    `update_by` varchar(100) NOT NULL DEFAULT '' COMMENT '更新人',
+    `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时候',
+    `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '更新时间',
+    `deleted` bit(1) NOT NULL DEFAULT 0 COMMENT '是否删除(0否1是)',
+    -- ===== 索引设置 =====
+    UNIQUE KEY uk_ip_deleted (ip, deleted),
+    INDEX idx_risk_score (risk_score),
+    INDEX idx_country_code (country_code)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='ip风险结果表';
+
+

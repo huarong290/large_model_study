@@ -1,0 +1,81 @@
+server:
+  port: 12104
+  servlet:
+    encoding:
+      enabled: true       # 启用请求/响应的字符编码支持 ✅
+      force: true         # 强制使用指定编码（覆盖客户端声明的编码） ✅
+      charset: UTF-8      # 设置字符编码为 UTF-8 ✅
+
+spring:
+  config:
+    import: "optional:file:.env[.properties]"
+  application:
+    name: mic-spring-ai-0004-chat-client-options
+
+  ai:
+    # ================================================================
+    # 1. Ollama 本地模型（默认）
+    # ================================================================
+    ollama:
+      base-url: http://localhost:11434
+      chat:
+        options:
+          model: qwen2.5-coder:14b
+          temperature: 0.7
+          num-predict: 2048
+          num-ctx: 4096
+
+    # ================================================================
+    # 2. DeepSeek 云端模型
+    # ================================================================
+    openai:
+      api-key: ${DEEPSEEK_API_KEY:not-configured}
+      base-url: https://api.deepseek.com
+      chat:
+        options:
+          model: deepseek-chat
+          temperature: 0.7
+          max-tokens: 2048
+          top-p: 0.9
+          frequency-penalty: 0.0
+          presence-penalty: 0.0
+
+# ================================================================
+# 参数调优预设配置
+# ================================================================
+options:
+  presets:
+    creative:
+      name: "创意模式"
+      temperature: 1.2
+      top-p: 0.95
+      max-tokens: 1024
+      description: "高温度、高多样性，适合创意写作"
+
+    balanced:
+      name: "平衡模式"
+      temperature: 0.7
+      top-p: 0.9
+      max-tokens: 1024
+      description: "中庸之道，适合日常对话"
+
+    precise:
+      name: "精准模式"
+      temperature: 0.1
+      top-p: 0.5
+      max-tokens: 2048
+      description: "低温度，适合精确问答、代码生成"
+
+    concise:
+      name: "简洁模式"
+      temperature: 0.5
+      top-p: 0.8
+      max-tokens: 512
+      description: "输出短小精悍，适合摘要总结"
+
+    verbose:
+      name: "详细模式"
+      temperature: 0.8
+      top-p: 0.95
+      max-tokens: 4096
+      description: "长输出，适合详细解释"

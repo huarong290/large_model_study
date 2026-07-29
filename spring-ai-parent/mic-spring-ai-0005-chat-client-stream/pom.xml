@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>com.ai.study</groupId>
+        <artifactId>spring-ai-parent</artifactId>
+        <version>1.0-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>mic-spring-ai-0005-chat-client-stream</artifactId>
+
+    <properties>
+        <maven.compiler.source>25</maven.compiler.source>
+        <maven.compiler.target>25</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+    <dependencies>
+        <!-- ================================================================= -->
+        <!-- 一、 Spring Boot 基础底座与测试模块                                   -->
+        <!-- ================================================================= -->
+        <!-- Web Starter：提供 Spring MVC、RESTful API 及内嵌 Web 容器支持 -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+
+        <!-- Spring Boot WebFlux（流式响应需要） -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-webflux</artifactId>
+        </dependency>
+        <!-- Test Starter：提供 JUnit 5、Spring Test、Mockito 等单元及集成测试支持 -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <!-- Reactor Test -->
+        <dependency>
+            <groupId>io.projectreactor</groupId>
+            <artifactId>reactor-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <!-- ================================================================= -->
+        <!-- 二、 Spring AI 大模型集成模块                                       -->
+        <!-- ================================================================= -->
+        <!-- OpenAI Starter：支持 OpenAI 官方 API 及所有兼容 OpenAI 规范的 API（如 DeepSeek 等） -->
+        <dependency>
+            <groupId>org.springframework.ai</groupId>
+            <artifactId>spring-ai-starter-model-openai</artifactId>
+        </dependency>
+
+        <!-- Ollama Starter：支持本地部署开源大模型（如 Llama、DeepSeek 本地运行等，保障数据隐私） -->
+        <dependency>
+            <groupId>org.springframework.ai</groupId>
+            <artifactId>spring-ai-starter-model-ollama</artifactId>
+        </dependency>
+
+        <!-- Google Vertex AI Gemini Starter：支持 Google Gemini 多模态大模型接入 -->
+        <!--        <dependency>-->
+        <!--            <groupId>org.springframework.ai</groupId>-->
+        <!--            &lt;!&ndash; 官方 artifactId 在 vertex 和 ai 之间包含连字符 &ndash;&gt;-->
+        <!--            <artifactId>spring-ai-starter-model-vertex-ai-gemini</artifactId>-->
+        <!--        </dependency>-->
+
+        <!-- ================================================================= -->
+        <!-- 三、 开发辅助与效率工具                                           -->
+        <!-- ================================================================= -->
+        <!-- Lombok：通过注解在编译期自动生成 Getter、Setter、ToString 等，减少样板代码 -->
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <optional>true</optional>
+        </dependency>
+
+        <!-- HuTool 工具类 -->
+        <dependency>
+            <groupId>cn.hutool</groupId>
+            <artifactId>hutool-all</artifactId>
+        </dependency>
+    </dependencies>
+
+</project>

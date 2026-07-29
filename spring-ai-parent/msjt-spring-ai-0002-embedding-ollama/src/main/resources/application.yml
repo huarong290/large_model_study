@@ -1,0 +1,17 @@
+server:
+  port: 12002                                    # 服务端口配置 ✅
+  servlet:
+    encoding:
+      enabled: true       # 启用请求/响应的字符编码支持 ✅
+      force: true         # 强制使用指定编码（覆盖客户端声明的编码） ✅
+      charset: UTF-8      # 设置字符编码为 UTF-8 ✅
+
+spring:
+  application:
+    name: msjt-spring-ai-0002-embedding
+  ai:
+    ollama:
+      base-url: http://localhost:11434
+      embedding:
+        enabled: true
+        model: bge-m3  # 刚才拉取的模型

@@ -1,0 +1,54 @@
+server:
+  port: 12102
+  servlet:
+    encoding:
+      enabled: true
+      force: true
+      charset: UTF-8
+
+spring:
+  config:
+    import: "optional:file:.env[.properties]"
+  application:
+    name: mic-spring-ai-0002-chat-client
+
+  ai:
+    # ================================================================
+    # 1. Ollama 本地大模型配置（默认使用）
+    # ================================================================
+    ollama:
+      base-url: http://localhost:11434
+      chat:
+        options:
+          model: qwen2.5-coder:14b
+          temperature: 0.7
+
+    # ================================================================
+    # 2. DeepSeek + Google Gemini（通过 OpenAI 兼容接口接入）
+    #
+    # Spring AI 的 OpenAI Starter 支持配置多个不同的 base-url，
+    # 但我们无法在同一个 openai 配置下配置两个不同的端点。
+    #
+    # 解决方案：在配置类中通过代码创建多个 OpenAiChatModel Bean，
+    # 每个使用不同的 base-url 和 api-key。
+    #
+    # 这里只配置默认的 DeepSeek，Gemini 在配置类中手动创建。
+    # ================================================================
+    openai:
+      api-key: ${DEEPSEEK_API_KEY:}
+      base-url: https://api.deepseek.com
+      chat:
+        options:
+          model: deepseek-chat
+          temperature: 0.7
+
+# ================================================================
+# 3. Google Gemini 配置（Google AI Studio OpenAI 兼容接口）
+# ================================================================
+gemini:
+  api-key: ${GEMINI_API_KEY:}
+  base-url: https://generativelanguage.googleapis.com/v1beta/openai/
+  chat:
+    options:
+      model: gemini-2.0-flash
+      temperature: 0.7

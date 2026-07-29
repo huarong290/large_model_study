@@ -1,0 +1,46 @@
+server:
+  port: 12104                                    # 服务端口配置 ✅
+  servlet:
+    encoding:
+      enabled: true       # 启用请求/响应的字符编码支持 ✅
+      force: true         # 强制使用指定编码（覆盖客户端声明的编码） ✅
+      charset: UTF-8      # 设置字符编码为 UTF-8 ✅
+
+
+spring:
+  config:
+    import: "optional:file:.env[.properties]"
+  application:
+    name: mic-spring-ai-0013-chat-client-multi-model                # 应用名称
+
+  ai:
+    # =================================================================
+    # 1. Ollama 本地开源大模型配置（完全本地化运行，保障数据与隐私安全）
+    # =================================================================
+    ollama:
+      base-url: http://localhost:11434                    # Ollama 本地服务监听地址
+      chat:
+        options:
+          model: qwen2.5-coder:14b                                 # 本地运行的模型名称（如 qwen2.5-coder:14b、deepseek-r1 等）
+          temperature: 0.7                                # 控制回答随机性
+    # =================================================================
+    # 2. DeepSeek 大模型配置（通过 Spring AI 的 OpenAI 兼容接口接入）
+    # =================================================================
+    openai:
+      api-key: ${DEEPSEEK_API_KEY}  # 强烈建议使用环境变量注入，生产环境绝对禁止明文硬编码
+      base-url: https://api.deepseek.com                  # DeepSeek 官方 API 基础路径
+      chat:
+        options:
+          model: deepseek-chat                            # 指定调用的对话模型名称
+          temperature: 0.7                                # 控制回答随机性（取值 0.0-2.0，值越小回答越严谨确定，越大越具发散性）
+# =================================================================
+# 3. Google Gemini 大模型配置（通过 Google AI Studio 的 OpenAI 兼容接口接入）
+# =================================================================
+gemini:
+  api-key: ${GEMINI_API_KEY}          # 你的 Google AI Studio Key
+  base-url: https://generativelanguage.googleapis.com/v1beta/openai/ # OpenAI 兼容端点
+  chat:
+    options:
+      model: gemini-2.0-flash                             # 推荐使用的 Gemini 模型
+      temperature: 0.7
+

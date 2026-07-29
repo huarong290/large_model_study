@@ -1,0 +1,50 @@
+server:
+  port: 12105                                    # 服务端口配置 ✅
+  servlet:
+    encoding:
+      enabled: true       # 启用请求/响应的字符编码支持 ✅
+      force: true         # 强制使用指定编码（覆盖客户端声明的编码） ✅
+      charset: UTF-8      # 设置字符编码为 UTF-8 ✅
+
+
+spring:
+  config:
+    import: "optional:file:.env[.properties]"
+  application:
+    name: mic-spring-ai-0005-chat-client-stream
+
+  ai:
+    # ================================================================
+    # 1. Ollama 本地模型（默认）
+    # ================================================================
+    ollama:
+      base-url: http://localhost:11434
+      chat:
+        options:
+          model: qwen2.5-coder:14b
+          temperature: 0.7
+          num-predict: 2048
+          num-ctx: 4096
+
+    # ================================================================
+    # 2. DeepSeek 云端模型
+    # ================================================================
+    openai:
+      api-key: ${DEEPSEEK_API_KEY:not-configured}
+      base-url: https://api.deepseek.com
+      chat:
+        options:
+          model: deepseek-chat
+          temperature: 0.7
+          max-tokens: 2048
+
+# ================================================================
+# 流式响应配置
+# ================================================================
+stream:
+  # 是否启用流式响应
+  enabled: true
+  # 缓冲区大小
+  buffer-size: 1024
+  # 超时时间（秒）
+  timeout: 60
