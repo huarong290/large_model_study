@@ -31,3 +31,4 @@ dist/
 *.tmp
 *.swp
 .env
+spring-ai-parent/.env
