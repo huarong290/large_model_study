@@ -10,7 +10,7 @@ spring:
   config:
     import: "optional:file:.env[.properties]"
   application:
-    name: mic-spring-ai-0006-chat-client-template
+    name: mic-spring-ai-0007-chat-client-structured
 
   ai:
     # ================================================================
