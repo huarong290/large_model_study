@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <!-- 1. 引入 Spring Boot 默认的基础配置，保留其强大的 Profile 支持 -->
+    <include resource="org/springframework/boot/logging/logback/base.xml"/>
+
+    <!-- 2. 定义变量，方便统一管理 -->
+    <!-- 日志文件保存路径 -->
+    <property name="LOG_HOME" value="${LOG_PATH:-./logs}" />
+    <!-- 应用名称 (从 application.yml 读取，如果读不到默认取 application) -->
+    <springProperty scope="context" name="APP_NAME" source="spring.application.name" defaultValue="application"/>
+    <!-- 日志保留天数 -->
+    <property name="MAX_HISTORY" value="30" />
+
+    <!-- ============================================== -->
+    <!-- 3. 重写 CONSOLE 控制台日志格式 (开发环境友好)     -->
+    <!-- ============================================== -->
+    <!-- 使用 springProfile 标签，只在开发环境生效，避免生产环境因颜色代码产生乱码 -->
+    <springProfile name="dev,local,default">
+        <property name="CONSOLE_LOG_PATTERN"
+                  value="%d{yyyy-MM-dd HH:mm:ss.SSS} %highlight(%-5level) [%thread] %cyan([%X{traceId:-NONE}]) %logger{36} - %msg%n"/>
+    </springProfile>
+
+    <!-- 生产环境控制台格式 (去除了颜色和特殊字符，适合收集到 ELK 或 日志中心) -->
+    <springProfile name="prod,test">
+        <property name="CONSOLE_LOG_PATTERN"
+                  value="%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [%thread] [%X{traceId:-NONE}] %logger{36} - %msg%n"/>
+    </springProfile>
+
+    <!-- ============================================== -->
+    <!-- 4. 配置 FILE 文件输出 (按天滚动，按大小切割)      -->
+    <!-- ============================================== -->
+    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <!-- 日志文件名 -->
+        <file>${LOG_HOME}/${APP_NAME}.log</file>
+
+        <!-- 滚动策略：基于时间 + 大小 -->
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <!-- 归档日志文件名格式：logs/应用名.2026-08-03.0.log.gz -->
+            <fileNamePattern>${LOG_HOME}/${APP_NAME}.%d{yyyy-MM-dd}.%i.log.gz</fileNamePattern>
+            <!-- 单个日志文件最大大小 (超过此大小自动切割) -->
+            <maxFileSize>100MB</maxFileSize>
+            <!-- 历史日志保留最大天数 -->
+            <maxHistory>${MAX_HISTORY}</maxHistory>
+            <!-- 所有归档日志总大小上限，超出后删除最早的文件 -->
+            <totalSizeCap>2GB</totalSizeCap>
+        </rollingPolicy>
+
+        <!-- 日志文件输出格式 (带上 traceId) -->
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [%thread] [%X{traceId:-NONE}] %logger{50} - %msg%n</pattern>
+            <!-- 解决中文乱码问题 -->
+            <charset>UTF-8</charset>
+        </encoder>
+    </appender>
+
+    <!-- ============================================== -->
+    <!-- 5. 自定义包级别日志级别 (按需开启)                -->
+    <!-- ============================================== -->
+    <!-- 将你项目的包设置为 DEBUG 级别，方便在开发时调试拦截器和 SQL -->
+    <logger name="com.ai.study" level="DEBUG" additivity="false">
+        <appender-ref ref="CONSOLE"/>
+        <appender-ref ref="FILE"/>
+    </logger>
+
+    <!-- 将 Spring 框架的日志调整为 WARN，减少控制台噪声 -->
+    <logger name="org.springframework" level="WARN" additivity="false">
+        <appender-ref ref="CONSOLE"/>
+        <appender-ref ref="FILE"/>
+    </logger>
+
+    <!-- ============================================== -->
+    <!-- 6. 根节点 (保留 Spring Boot 默认配置)           -->
+    <!-- ============================================== -->
+    <!-- base.xml 里已经配置了 CONSOLE 和 FILE，这里我们不再重复配置 -->
+    <!-- 但为了确保自定义的 FILE 生效，我们需要在 Spring Boot 启动参数里指向它 -->
+    <!-- 或者，如果不需要基础 appender，可以将 root 级别设为 INFO 并显式引用 -->
+    <root level="INFO">
+        <!-- Spring Boot 默认包含了 Console，这里无需重复添加，防止重复打印 -->
+        <appender-ref ref="FILE" />
+    </root>
+
+</configuration>
