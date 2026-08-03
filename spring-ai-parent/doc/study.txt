@@ -1,70 +1,350 @@
-完整知识点覆盖清单
-分类	知识点	状态	模块号
-ChatClient核心	基础使用、参数配置、流式响应	✅	0001-0005
-提示词工程	Template、结构化输出	✅	0006-0007
-高级特性	记忆、RAG、工具调用	✅	0008-0010
-运维扩展	Advisor、可观测性	✅	0011-0012
-进阶特性	路由、缓存、安全、评估	✅	0013-0016
-实战项目	综合应用	✅	0017
-音频处理	语音转文字、文字转语音	🆕	0018-0019
-图像处理	生成、识别、多模态	🆕	0020-0021
-向量数据库	PGVector、Redis、Milvus	🆕	0022-0024
-批量并发	批处理、限流	🆕	0025-0026
-Agent	基础、多Agent、推理	🆕	0027-0029
-
- 模块分类更清晰
-第一阶段：入门基础（3个）
-第二阶段：ChatClient 核心基础（5个）
-第三阶段：提示词工程（2个）
-第四阶段：高级特性（3个）
-第五阶段：运维与扩展（2个）
-第六阶段：进阶特性（4个）
-第七阶段：多模态与媒体处理（4个）
-第八阶段：向量数据库与存储（3个）
-第九阶段：批量处理与并发控制（2个）
-第十阶段：Agent与推理增强（3个）
-第十一阶段：模型微调与优化（2个）
-第十二阶段：国际化与多语言（2个）
-
-CREATE TABLE IF NOT EXISTS cw_ods_ip_risk_result (
-                                                     id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY COMMENT '自增主键',
-                                                     ip VARCHAR(45) NOT NULL COMMENT 'IP地址(支持IPv4与IPv6)',
-
-    -- ===== 网络维度 (Network) =====
-    provider VARCHAR(255) NOT NULL DEFAULT '' COMMENT '服务商 (network.provider)',
-    organisation VARCHAR(255) NOT NULL DEFAULT '' COMMENT '所属机构 (network.organisation)',
-    network_type VARCHAR(50) NOT NULL DEFAULT '' COMMENT '网络类型，如 Business/Residential (network.type)',
-
-    -- ===== 地理位置维度 (Location) =====
-    continent_name VARCHAR(100) NOT NULL DEFAULT '' COMMENT '大洲名称 (location.continent_name)',
-    continent_code VARCHAR(10) NOT NULL DEFAULT '' COMMENT '大洲代码 (location.continent_code)',
-    country_name VARCHAR(100) NOT NULL DEFAULT '' COMMENT '国家名称 (location.country_name)',
-    country_code VARCHAR(10) NOT NULL DEFAULT '' COMMENT '国家二字码，如 CN (location.country_code)',
-    region_name VARCHAR(100) NOT NULL DEFAULT '' COMMENT '省/州名称 (location.region_name)',
-    region_code VARCHAR(50) NOT NULL DEFAULT '' COMMENT '省/州代码 (location.region_code)',
-    city_name VARCHAR(100) NOT NULL DEFAULT '' COMMENT '城市名称 (location.city_name)',
-
-    -- ===== 安全检测维度 (Detections) =====
-    proxy_flag TINYINT UNSIGNED NOT NULL DEFAULT 0 COMMENT '是否代理 0:否 1:是 (detections.proxy)',
-    vpn_flag TINYINT UNSIGNED NOT NULL DEFAULT 0 COMMENT '是否VPN 0:否 1:是 (detections.vpn)',
-    compromised_flag TINYINT UNSIGNED NOT NULL DEFAULT 0 COMMENT '是否被入侵/僵尸网络 0:否 1:是 (detections.compromised)',
-    scraper_flag TINYINT UNSIGNED NOT NULL DEFAULT 0 COMMENT '是否爬虫 0:否 1:是 (detections.scraper)',
-    tor_flag TINYINT UNSIGNED NOT NULL DEFAULT 0 COMMENT '是否TOR节点 0:否 1:是 (detections.tor)',
-    hosting_flag TINYINT UNSIGNED NOT NULL DEFAULT 0 COMMENT '是否机房/托管 0:否 1:是 (detections.hosting)',
-    anonymous_flag TINYINT UNSIGNED NOT NULL DEFAULT 0 COMMENT '是否匿名 0:否 1:是 (detections.anonymous)',
-    risk_score TINYINT UNSIGNED NOT NULL DEFAULT 0 COMMENT '风险分值 0-100 (detections.risk)',
-    confidence_score TINYINT UNSIGNED NOT NULL DEFAULT 0 COMMENT '检测置信度 0-100 (detections.confidence)',
-
-    -- ===== 审计与时间列 =====
-    `create_by` varchar(100) NOT NULL DEFAULT '' COMMENT '创建人',
-    `update_by` varchar(100) NOT NULL DEFAULT '' COMMENT '更新人',
-    `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时候',
-    `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '更新时间',
-    `deleted` bit(1) NOT NULL DEFAULT 0 COMMENT '是否删除(0否1是)',
-    -- ===== 索引设置 =====
-    UNIQUE KEY uk_ip_deleted (ip, deleted),
-    INDEX idx_risk_score (risk_score),
-    INDEX idx_country_code (country_code)
-    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='ip风险结果表';
-
-
+   info 2026-08-03 08:22:16.331       lsvc   main    980   8273  857                      app.session - Session features: deskrt, clipboard, chat, audio, input, tcp_tunnel.
+   info 2026-08-03 08:22:16.332       lsvc   main    980   8273  857                      app.session - Connecting to current session 501.
+   info 2026-08-03 08:22:16.333       lsvc   main    980   8273  857                      app.session - Starting a new  backend in session 501.
+ * * * * * * * * * * * * * * * * * *
+   info 2026-08-03 08:22:16.416       back   main  30334 19240149                                  main - * AnyDesk MAC Startup *
+   info 2026-08-03 08:22:16.416       back   main  30334 19240149                                  main - * Version 9.7.0 ((unknown) c993a11ece9a7fbc51e188fc643de7ad000b2b26)
+   info 2026-08-03 08:22:16.416       back   main  30334 19240149                                  main - * Build 20260429164743
+   info 2026-08-03 08:22:16.416       back   main  30334 19240149                                  main - * Prefix ad
+   info 2026-08-03 08:22:16.419       back   main  30334 19240149                                  main - * OS 版本26.5.2（版号25F84）
+   info 2026-08-03 08:22:16.419       back   main  30334 19240149                                  main - * Arch arm64
+   info 2026-08-03 08:22:16.419       back   main  30334 19240149                                  main - * Launch path /Applications/AnyDesk.app
+   info 2026-08-03 08:22:16.419       back   main  30334 19240149                                  main - * Copyright (C) AnyDesk Software GmbH *
+   info 2026-08-03 08:22:16.420       back   main  30334 19240149                                  main - 
+   info 2026-08-03 08:22:16.420       back   main  30334 19240149                                  main - pid: 30334 ppid: 1 uid: 501
+   info 2026-08-03 08:22:16.420       back   main  30334 19240149                         impl_selector - using neon
+   info 2026-08-03 08:22:16.420       back   main  30334 19240149                                  main - process maxfiles 256 : -1
+   info 2026-08-03 08:22:16.420       back   main  30334 19240149                                  main - raising RLIMIT_NOFILE to 10240
+   info 2026-08-03 08:22:16.456       lsvc   main    980   8273  857                      app.session - Backend PID: 30334
+   info 2026-08-03 08:22:16.456       lsvc   main    980   8273  857            named_process_starter - Using existing backend (PID 30334, session 501).
+   info 2026-08-03 08:22:16.456       lsvc   main    980   8273  857                      app.session - Backend (retry) PID: 30334
+   info 2026-08-03 08:22:16.456       lsvc   main    980   8273  857                      app.session - 1: Connecting to the backend.
+   info 2026-08-03 08:22:16.467       lsvc   main    980   8273  857                      app.session - 1: IPC connection established.
+   info 2026-08-03 08:22:16.467       lsvc   main    980   8273  857                      app.session - 2: Requesting a session at the backend.
+   info 2026-08-03 08:22:16.468       lsvc   main    980   8273  857                      app.session - 2: Waiting for restore state request.
+  error 2026-08-03 08:22:16.468       ctrl   wrk0    981   8969              base.prot.packet_factory - Invalid packet received (type=24, 0 bytes).
+   info 2026-08-03 08:22:16.468       lsvc   main    980   8273    1                      app.service - Process start: 30334 (backend:501).
+  error 2026-08-03 08:22:16.469       ctrl   wrk0    981   8969                        hub_ipc_socket - IPC packet deserialization failed.
+   info 2026-08-03 08:22:16.475       back   main  30334 19240149                           AppDelegate - Connected to already running gsvc:980
+  error 2026-08-03 08:22:16.492       back   main  30334 19240149         mac_app.helper_tool_interface - Can't connect to helper
+  error 2026-08-03 08:22:16.693       back   main  30334 19240149         mac_app.helper_tool_interface - Can't connect to helper
+  error 2026-08-03 08:22:16.894       back   main  30334 19240149         mac_app.helper_tool_interface - Can't connect to helper
+  error 2026-08-03 08:22:17.094       back   main  30334 19240149         mac_app.helper_tool_interface - Can't connect to helper
+  error 2026-08-03 08:22:17.296       back   main  30334 19240149         mac_app.helper_tool_interface - Can't connect to helper
+  error 2026-08-03 08:22:17.496       back   main  30334 19240149         mac_app.helper_tool_interface - Can't connect to helper
+  error 2026-08-03 08:22:17.497       back   main  30334 19240149         mac_app.helper_tool_interface - Give up re-connecting to helper (is_global_service_installed).
+  error 2026-08-03 08:22:17.497       back   main  30334 19240149         mac_app.helper_tool_interface - Global files not found.
+   info 2026-08-03 08:22:17.500       back   main  30334 19240149                       app.common_path - initialized user = /Users/zfgs_51/.anydesk, system = /Users/zfgs_51/.anydesk
+   info 2026-08-03 08:22:17.502       back   main  30334 19240149          base.data.config_application - Adding GPO defaults layer.
+   info 2026-08-03 08:22:17.503       back   main  30334 19240149                               app.mdm - Loaded 0/665 MDM defaults.
+   info 2026-08-03 08:22:17.503       back   main  30334 19240149          base.data.config_application - Adding GPO overrides layer.
+   info 2026-08-03 08:22:17.504       back   main  30334 19240149                               app.mdm - Loaded 0/665 MDM overrides.
+   info 2026-08-03 08:22:17.505       back   main  30334 19240149                           AppDelegate - Starting backend.
+   info 2026-08-03 08:22:17.506       back   main  30334 19240149          base.data.config_application - Adding GPO defaults layer.
+   info 2026-08-03 08:22:17.506       back   main  30334 19240149                               app.mdm - Loaded 0/665 MDM defaults.
+   info 2026-08-03 08:22:17.507       back   main  30334 19240149          base.data.config_application - Adding GPO overrides layer.
+   info 2026-08-03 08:22:17.507       back   main  30334 19240149                               app.mdm - Loaded 0/665 MDM overrides.
+   info 2026-08-03 08:22:17.508       back   main  30334 19240149                           gui.gui_app - DPI scaling: 1.00 / 1.00
+   info 2026-08-03 08:22:17.508       back   main  30334 19240149                           gui.gui_app - Using std-resolution bitmaps.
+   info 2026-08-03 08:22:17.510       back   main  30334 19240149                                   sif - Initializing license info.
+   info 2026-08-03 08:22:17.510       back   main  30334 19240149                                   sif - License info updated: free-1
+   info 2026-08-03 08:22:17.510       back   main  30334 19240149                       base.signal.hub - 8 threads.
+   info 2026-08-03 08:22:17.515       back   timr  30334 19240202          base.signal.local.timer_impl - Initialized master timer.
+   info 2026-08-03 08:22:17.515       back   timr  30334 19240203          base.signal.local.timer_impl - Initialized master timer.
+   info 2026-08-03 08:22:17.515       back   timr  30334 19240204          base.signal.local.timer_impl - Initialized master timer.
+   info 2026-08-03 08:22:17.516       back   main  30334 19240149                    app.tunnel_ft_comp - Ready.
+   info 2026-08-03 08:22:17.516       back   timr  30334 19240205          base.signal.local.timer_impl - Initialized master timer.
+   info 2026-08-03 08:22:17.516       back   main  30334 19240149                     base.monitor_info - 1 active monitor(s) found.
+   info 2026-08-03 08:22:17.516       back   main  30334 19240149                       mac_app.backend - run
+   info 2026-08-03 08:22:17.516       back   ctrl  30334 19240206                                select - Choosing select.
+   info 2026-08-03 08:22:17.516       back   main  30334 19240149                                select - Choosing select.
+   info 2026-08-03 08:22:17.516       back   main  30334 19240149                                select - Choosing select.
+   info 2026-08-03 08:22:17.516       back   main  30334 19240149                                select - Choosing select.
+   info 2026-08-03 08:22:17.517       back   main  30334 19240149                                select - Choosing select.
+   info 2026-08-03 08:22:17.517       back   main  30334 19240149                                select - Choosing select.
+   info 2026-08-03 08:22:17.517       back   main  30334 19240149                                select - Choosing select.
+   info 2026-08-03 08:22:17.517       back   main  30334 19240149                                select - Choosing select.
+   info 2026-08-03 08:22:17.517       back   main  30334 19240149                                select - Choosing select.
+   info 2026-08-03 08:22:17.517       back   main  30334 19240149                                select - Choosing select.
+   info 2026-08-03 08:22:17.517       back   ctrl  30334 19240206                       mac_app.backend - Backend is starting up.
+   info 2026-08-03 08:22:17.517       back   ctrl  30334 19240206                    desk_rt.cg_capture - Starting capture.
+   info 2026-08-03 08:22:17.517       back   ctrl  30334 19240206                       mac_app.backend - pid backend: 30334
+   info 2026-08-03 08:22:17.520       lsvc   main    980   8273    1                      app.service - New IPC connection.
+   info 2026-08-03 08:22:17.520       lsvc   main    980   8273    1                  fiber.scheduler - Spawning child fiber 865 'ipc_connection' (parent: 1).
+   info 2026-08-03 08:22:17.522       lsvc   main    980   8273  865                      app.service - Creating an IPC accept socket.
+   info 2026-08-03 08:22:17.523       lsvc   main    980   8273  865                      app.service - Connected to 30334 (backend:501).
+   info 2026-08-03 08:22:17.523       lsvc   main    980   8273  865                      app.service - Process login detected.
+   info 2026-08-03 08:22:17.524       back   wrk0  30334 19240207                       mac_app.backend - Incoming IPC connection.
+   info 2026-08-03 08:22:17.525       back   timr  30334 19240217          base.signal.local.timer_impl - Initialized master timer.
+   info 2026-08-03 08:22:17.525       back   ctrl  30334 19240206                       mac_app.backend - Starting session watcher.
+   info 2026-08-03 08:22:17.525       back   ctrl  30334 19240206                       mac_app.backend - Successfully set up user console watcher.
+   info 2026-08-03 08:22:17.526       back   timr  30334 19240218          base.signal.local.timer_impl - Initialized master timer.
+   info 2026-08-03 08:22:17.526       back   timr  30334 19240219          base.signal.local.timer_impl - Initialized master timer.
+   info 2026-08-03 08:22:17.526       back   wrk0  30334 19240207                   app.backend_session - Initializing session.
+   info 2026-08-03 08:22:17.527       back   wrk0  30334 19240207                       mac_app.backend - Session count: 1
+warning 2026-08-03 08:22:17.527       back   wrk1  30334 19240208                                   sif - Dropping out of date license response.
+   info 2026-08-03 08:22:17.527       back   wrk1  30334 19240208                               app.mdm - Loaded 0/665 MDM overrides.
+   info 2026-08-03 08:22:17.528       back   wrk1  30334 19240208                               app.mdm - Loaded 0/665 MDM defaults.
+   info 2026-08-03 08:22:17.528       back   ctrl  30334 19240206                       mac_app.backend - Backend startup finished.
+   info 2026-08-03 08:22:17.528       back   ctrl  30334 19240206                   app.backend_session - Starting sockets.
+   info 2026-08-03 08:22:17.528       back   main  30334 19240149                       mac_app.backend - Prevent sleep
+   info 2026-08-03 08:22:17.530       back   wrk1  30334 19240208                   app.backend_session - Incoming session request: zhuzhu (1861219576)
+   info 2026-08-03 08:22:17.530       back   wrk1  30334 19240208                   app.backend_session - Remote caps: sound_src, sound_sink, keyboard_sink, keyboard2, switch_sides, clip_paste_files, clip_src_files, send_sas, block_input, request_vp_dimensions, keyboard_unicode, sysinfo, volatile_token, filetransfer_server, filetransfer_client, whiteboard, tcp_tunnel, privacy_feature, vpn, encoder_reset, two_factor_auth, force_remote_restart, lossless_codec, report_kbd_focus, string_input, quality_adaptive, clipboard_split, video_mode, encoder_retransmit
+   info 2026-08-03 08:22:17.530       back   wrk1  30334 19240208                   app.backend_session - Remote OS: macOS, Connection flags: direct paid 3 4 
+   info 2026-08-03 08:22:17.530       back   wrk1  30334 19240208                   app.backend_session - Remote version: 8.1.2
+   info 2026-08-03 08:22:17.530       back   wrk1  30334 19240208                   app.backend_session - Trying to register a new backend session.
+   info 2026-08-03 08:22:17.530       back   wrk1  30334 19240208                       mac_app.backend - register_session
+   info 2026-08-03 08:22:17.531       back   wrk1  30334 19240208                       mac_app.backend - Waking display(s) up if asleep
+   info 2026-08-03 08:22:17.742       back   wrk1  30334 19240208                   app.backend_session - Requesting to restore permissions.
+   info 2026-08-03 08:22:17.742       lsvc   main    980   8273  857                      app.session - 2: Waiting for session ack.
+   info 2026-08-03 08:22:17.743       back   wrk1  30334 19240208                   app.backend_session - Restoring permissions. (action: 3; state: 3)
+   info 2026-08-03 08:22:17.743       back   wrk1  30334 19240208                   app.backend_session - Initializing permissions.
+   info 2026-08-03 08:22:17.744       back   wrk1  30334 19240208                   app.backend_session - Requesting to store permissions.
+   info 2026-08-03 08:22:17.744       back   wrk1  30334 19240208                       clipbrd.capture - Setting new capture formats: text.
+   info 2026-08-03 08:22:17.744       back   wrk1  30334 19240208                   app.backend_session - Requesting to store permissions.
+   info 2026-08-03 08:22:17.744       back   wrk1  30334 19240208                       clipbrd.capture - Setting new capture formats: text.
+   info 2026-08-03 08:22:17.744       back   wrk1  30334 19240208                   app.backend_session - Requesting to store permissions.
+   info 2026-08-03 08:22:17.744       back   wrk1  30334 19240208                       clipbrd.capture - Setting new capture formats: text.
+   info 2026-08-03 08:22:17.744       back   wrk1  30334 19240208                   app.backend_session - Requesting to store permissions.
+   info 2026-08-03 08:22:17.744       back   wrk1  30334 19240208                       clipbrd.capture - Setting new capture formats: text.
+   info 2026-08-03 08:22:17.744       back   wrk1  30334 19240208                   app.backend_session - Requesting to store permissions.
+   info 2026-08-03 08:22:17.744       back   wrk1  30334 19240208                       clipbrd.capture - Setting new capture formats: text.
+   info 2026-08-03 08:22:17.744       back   wrk1  30334 19240208                   app.backend_session - Requesting to store permissions.
+   info 2026-08-03 08:22:17.744       back   wrk1  30334 19240208                       clipbrd.capture - Setting new capture formats: text.
+   info 2026-08-03 08:22:17.744       back   wrk1  30334 19240208                   app.backend_session - Requesting to store permissions.
+   info 2026-08-03 08:22:17.744       back   wrk1  30334 19240208                       clipbrd.capture - Setting new capture formats: text.
+   info 2026-08-03 08:22:17.744       back   wrk1  30334 19240208                   app.backend_session - Requesting to store permissions.
+   info 2026-08-03 08:22:17.744       back   wrk1  30334 19240208                       clipbrd.capture - Setting new capture formats: text.
+   info 2026-08-03 08:22:17.744       back   wrk1  30334 19240208                   app.backend_session - Requesting to store permissions.
+   info 2026-08-03 08:22:17.744       back   wrk1  30334 19240208                       clipbrd.capture - Setting new capture formats: text.
+   info 2026-08-03 08:22:17.744       back   wrk1  30334 19240208                   app.backend_session - Requesting to store permissions.
+   info 2026-08-03 08:22:17.744       back   wrk1  30334 19240208                       clipbrd.capture - Setting new capture formats: text.
+   info 2026-08-03 08:22:17.744       back   wrk1  30334 19240208                   app.backend_session - Requesting to store permissions.
+   info 2026-08-03 08:22:17.744       back   wrk1  30334 19240208                       clipbrd.capture - Setting new capture formats: text.
+   info 2026-08-03 08:22:17.744       back   wrk1  30334 19240208                   app.backend_session - Requesting to store permissions.
+   info 2026-08-03 08:22:17.744       back   wrk1  30334 19240208                       clipbrd.capture - Setting new capture formats: text.
+   info 2026-08-03 08:22:17.744       back   wrk1  30334 19240208                   app.backend_session - Requesting to store permissions.
+   info 2026-08-03 08:22:17.744       back   wrk1  30334 19240208                       clipbrd.capture - Setting new capture formats: text.
+   info 2026-08-03 08:22:17.744       back   wrk1  30334 19240208                   app.backend_session - Requesting to store permissions.
+   info 2026-08-03 08:22:17.744       back   wrk1  30334 19240208                       clipbrd.capture - Setting new capture formats: text.
+   info 2026-08-03 08:22:17.744       back   wrk1  30334 19240208                   app.backend_session - Requesting to store permissions.
+   info 2026-08-03 08:22:17.744       back   wrk1  30334 19240208                       clipbrd.capture - Setting new capture formats: text.
+   info 2026-08-03 08:22:17.744       back   wrk1  30334 19240208                   app.backend_session - Requesting to store permissions.
+   info 2026-08-03 08:22:17.744       back   wrk1  30334 19240208                       clipbrd.capture - Setting new capture formats: text.
+   info 2026-08-03 08:22:17.744       back   wrk1  30334 19240208                   app.backend_session - Requesting to store permissions.
+   info 2026-08-03 08:22:17.744       back   wrk1  30334 19240208                       clipbrd.capture - Setting new capture formats: text.
+   info 2026-08-03 08:22:17.744       back   wrk1  30334 19240208                   app.backend_session - Requesting to store permissions.
+   info 2026-08-03 08:22:17.744       back   wrk1  30334 19240208                       clipbrd.capture - Setting new capture formats: text.
+   info 2026-08-03 08:22:17.744       back   wrk1  30334 19240208                   app.backend_session - Checking capabilities.
+warning 2026-08-03 08:22:17.761       back   wrk1  30334 19240208                   app.backend_session - Removing remote restart flag (0 / 0)
+   info 2026-08-03 08:22:17.761       back   wrk1  30334 19240208                   app.backend_session - Acknowledging session.
+   info 2026-08-03 08:22:17.761       lsvc   main    980   8273  857                      app.session - Send route info for the accept window.
+   info 2026-08-03 08:22:17.761       lsvc   main    980   8273  857                      app.session - 2: Session acknowledged.
+   info 2026-08-03 08:22:17.761       back   wrk1  30334 19240208                   desk_rt.auto_adjust - Route type: tunnel (internet)
+   info 2026-08-03 08:22:17.761       lsvc   main    980   8273  857                      app.session - 3: Authentication 65 0.
+   auth 2026-08-03 08:22:20.364       lsvc   main    980   8273  857                      app.session - 3: Authenticated by local user.
+   info 2026-08-03 08:22:20.364       lsvc   main    980   8273  857                      app.session - 4: Waiting for the backend to be ready.
+   info 2026-08-03 08:22:20.365       back   ctrl  30334 19240206                   app.backend_session - Starting session (deskrt, clipboard, chat, audio, input, tcp_tunnel).
+   info 2026-08-03 08:22:20.365       back   timr  30334 19240719          base.signal.local.timer_impl - Initialized master timer.
+   info 2026-08-03 08:22:20.365       back   ctrl  30334 19240206                       desk_rt.encoder - 8 segments.
+   info 2026-08-03 08:22:20.365       back   ctrl  30334 19240206                     base.monitor_info - 1 active monitor(s) found.
+   info 2026-08-03 08:22:20.366       back   ctrl  30334 19240206                   app.backend_session - Continuing session start.
+   info 2026-08-03 08:22:20.366       back   ctrl  30334 19240206             desk_rt.capture_component - Starting capture.
+   info 2026-08-03 08:22:20.366       back   ctrl  30334 19240206                     base.monitor_info - 1 active monitor(s) found.
+   info 2026-08-03 08:22:20.366       back   ctrl  30334 19240206             capture.cg_stream_capture - Capturing at res: 1920x1080
+   info 2026-08-03 08:22:20.368       back   wrk0  30334 19240207             desk_rt.capture_component - Keyboard layout changed to: unknown
+   info 2026-08-03 08:22:20.368       back   wrk0  30334 19240207             desk_rt.capture_component - Focused monitor changed: 0 (screen_3)
+   info 2026-08-03 08:22:20.369       back   ctrl  30334 19240206                        app.mouse_sink - Starting mouse sink.
+   info 2026-08-03 08:22:20.369       back   ctrl  30334 19240206                     app.backend_shell - Backend Shell started.
+   info 2026-08-03 08:22:20.369       back   ctrl  30334 19240206                   app.backend_session - Sending input (10) permissions (enabled forbidden supported)
+   info 2026-08-03 08:22:20.369       back   ctrl  30334 19240206                   app.backend_session - Sending audio (2) permissions (enabled forbidden unsupported)
+   info 2026-08-03 08:22:20.369       back   ctrl  30334 19240206                   app.backend_session - Sending clipboard (10) permissions (enabled forbidden supported)
+   info 2026-08-03 08:22:20.369       lsvc   main    980   8273  857                      app.session - 4: Backend ready.
+   info 2026-08-03 08:22:20.369       back   ctrl  30334 19240206                   app.backend_session - Sending block input (0) permissions (forbidden unsupported)
+   info 2026-08-03 08:22:20.369       lsvc   main    980   8273  857                      app.session - 5: Entering processing loop.
+   info 2026-08-03 08:22:20.369       back   ctrl  30334 19240206                   app.backend_session - Sending SAS (8) permissions (forbidden supported)
+   info 2026-08-03 08:22:20.369       lsvc   main    980   8273  857         anynet.client_packetizer - Adjusted send buffer: 8192
+   info 2026-08-03 08:22:20.369       back   ctrl  30334 19240206                   app.backend_session - Sending file manager (11) permissions (enabled allowed supported)
+   info 2026-08-03 08:22:20.369       back   ctrl  30334 19240206                   app.backend_session - Sending lock account (8) permissions (forbidden supported)
+   info 2026-08-03 08:22:20.369       back   ctrl  30334 19240206                   app.backend_session - Sending record session (8) permissions (forbidden supported)
+   info 2026-08-03 08:22:20.369       back   ctrl  30334 19240206                   app.backend_session - Sending whiteboard (8) permissions (forbidden supported)
+   info 2026-08-03 08:22:20.370       back   ctrl  30334 19240206                   app.backend_session - Sending TCP tunneling (11) permissions (enabled allowed supported)
+   info 2026-08-03 08:22:20.370       back   ctrl  30334 19240206                   app.backend_session - Sending VPN (2) permissions (enabled forbidden unsupported)
+   info 2026-08-03 08:22:20.370       back   ctrl  30334 19240206                   app.backend_session - Sending privacy (12) permissions (disabled forbidden supported)
+   info 2026-08-03 08:22:20.370       back   ctrl  30334 19240206                   app.backend_session - Sending clipboard files (10) permissions (enabled forbidden supported)
+   info 2026-08-03 08:22:20.370       back   ctrl  30334 19240206                   app.backend_session - Sending restart (8) permissions (forbidden supported)
+   info 2026-08-03 08:22:20.370       back   wrk1  30334 19240208                   desk_rt.auto_adjust - Route type: tunnel (internet)
+   info 2026-08-03 08:22:20.370       back   ctrl  30334 19240206                   app.backend_session - Sending sysinfo (11) permissions (enabled allowed supported)
+   info 2026-08-03 08:22:20.370       back   ctrl  30334 19240206                   app.backend_session - Sending mouse pointer (8) permissions (forbidden supported)
+   info 2026-08-03 08:22:20.370       back   ctrl  30334 19240206                   app.backend_session - Sending modify_forbidden_windows (8) permissions (forbidden supported)
+   info 2026-08-03 08:22:20.370       back   ctrl  30334 19240206                   app.backend_session - Sending logoff_session (0) permissions (forbidden unsupported)
+   info 2026-08-03 08:22:20.370       back   ctrl  30334 19240206                   app.backend_session - Sending remote_shell (11) permissions (enabled allowed supported)
+   info 2026-08-03 08:22:20.370       back   ctrl  30334 19240206                   app.backend_session - Requesting to store permissions.
+   info 2026-08-03 08:22:20.370       back   ctrl  30334 19240206                       clipbrd.capture - Setting new capture formats: text.
+   info 2026-08-03 08:22:20.370       back   ctrl  30334 19240206                   app.backend_session - Session started (ok).
+   info 2026-08-03 08:22:20.370       lsvc   main    980   8273  857         anynet.client_packetizer - Adjusted send buffer: 8192
+   info 2026-08-03 08:22:20.378       back   wrk0  30334 19240207             desk_rt.capture_component - Keyboard layout changed to: unknown
+   info 2026-08-03 08:22:20.382       back   main  30334 19240149                    app.input_injector - release_keys mod keys up
+   info 2026-08-03 08:22:20.472       back   wrk1  30334 19240208                   app.backend_session - Received new mouse cursor parameters (2).
+   info 2026-08-03 08:22:20.472       back   wrk2  30334 19240209                   app.backend_session - Received new gui feedback parameters (0).
+   info 2026-08-03 08:22:20.472       back   main  30334 19240149                    app.input_injector - release_keys mod keys up
+   info 2026-08-03 08:22:20.472       back   wrk2  30334 19240209           desk_rt.system_event_source - Disabled gui feedback
+   info 2026-08-03 08:22:20.472       back   wrk1  30334 19240208           desk_rt.system_event_source - Enabled mouse cursor
+   info 2026-08-03 08:22:20.472       back   wrk1  30334 19240208                   app.backend_session - Received new video quality (20).
+   info 2026-08-03 08:22:20.472       back   wrk1  30334 19240208                   app.backend_session - Received new auto-quality preset (1).
+   info 2026-08-03 08:22:20.472       back   wrk1  30334 19240208                   desk_rt.auto_adjust - New preset: 0.
+   info 2026-08-03 08:22:20.472       back   wrk2  30334 19240209                   app.backend_session - Received new image quality (7).
+warning 2026-08-03 08:22:20.473       back   wrk3  30334 19240210                   app.backend_session - Rejecting audio parameters request due to insufficient permissions (1).
+   info 2026-08-03 08:22:20.473       back   wrk1  30334 19240208                   app.backend_session - Enabling capture.
+   info 2026-08-03 08:22:20.513       back         30334 19240174             capture.cg_stream_capture - start_capture using ScreenCaptureKit
+   info 2026-08-03 08:22:20.524       back   wrk0  30334 19240207                       desk_rt.encoder - Format changed to 1920x1080 (X8R8G8B8).
+   info 2026-08-03 08:22:20.681       back   wrk0  30334 19240207             desk_rt.capture_component - Keyboard layout changed to: zh
+   info 2026-08-03 08:22:20.968       lsvc   main    980   8273  857         anynet.client_packetizer - Adjusted send buffer: 16384
+   info 2026-08-03 08:22:21.314       lsvc   main    980   8273  857         anynet.client_packetizer - Adjusted send buffer: 24576
+   info 2026-08-03 08:22:22.273       lsvc   main    980   8273  857           app.session_tcp_tunnel - Received setup request.
+   info 2026-08-03 08:22:22.273       back   wrk1  30334 19240208                   app.backend_session - Received a thumbnail request.
+   info 2026-08-03 08:22:22.273       lsvc   main    980   8273  857           app.session_tcp_tunnel - Starting. Namespace: E4B09334
+   info 2026-08-03 08:22:22.392       back   wrk1  30334 19240208                   app.backend_session - Sending a new thumbnail.
+   info 2026-08-03 08:22:22.764       lsvc   main    980   8273  857         anynet.client_packetizer - Adjusted send buffer: 32768
+   info 2026-08-03 08:22:23.371       back   wrk1  30334 19240208                   desk_rt.auto_adjust - Forced adjust because of a timeout (333.45 kb/s).
+   info 2026-08-03 08:22:23.371       back   wrk1  30334 19240208                   desk_rt.auto_adjust - Adjusting for 250-500 kb/s
+   info 2026-08-03 08:22:23.985       lsvc   main    980   8273  857                      app.session - Session closed by remote side: desk_rt_ipc_error.
+   info 2026-08-03 08:22:23.985       lsvc   main    980   8273  857                      app.session - 5: Processing done.
+   info 2026-08-03 08:22:23.986       back   wrk1  30334 19240208                   app.backend_session - The user has requested a connection quit.
+   info 2026-08-03 08:22:23.986       lsvc   main    980   8273                       fiber.scheduler - Fiber 857 'anynet_connection' (parent: 1) requested quit of fiber 864 'keepalive' (parent: 857 'anynet_connection').
+   info 2026-08-03 08:22:23.986       lsvc   main    980   8273  858                anynet.any_socket - Connection closed by the server (anynet_closed).
+   info 2026-08-03 08:22:23.986       lsvc   main    980   8273  858                anynet.any_socket - Accept fiber stopped.
+   info 2026-08-03 08:22:23.986       lsvc   main    980   8273                       fiber.scheduler - Fiber 858 'any_socket_accept' terminated.
+   info 2026-08-03 08:22:23.986       lsvc   main    980   8273                       fiber.scheduler - Fiber 864 'keepalive' (parent: 857 'anynet_connection') terminated.
+   info 2026-08-03 08:22:23.986       lsvc   main    980   8273    8            anynet.connection_mgr - Scheduling cleanup in 30 seconds.
+  error 2026-08-03 08:22:23.986       ctrl   wrk0    981   8969              base.prot.packet_factory - Invalid packet received (type=110, 9 bytes).
+  error 2026-08-03 08:22:23.986       back   wrk2  30334 19240209                    app.tunnel_ft_comp - Invalid session id in cancel operation (857).
+  error 2026-08-03 08:22:23.986       ctrl   wrk0    981   8969                        hub_ipc_socket - IPC packet deserialization failed.
+   info 2026-08-03 08:22:23.986       back   wrk0  30334 19240207                   app.backend_session - The socket was closed remotely.
+   info 2026-08-03 08:22:23.987       lsvc   main    980   8273  857                      app.service - Fiber exit (net).
+   info 2026-08-03 08:22:23.987       lsvc   main    980   8273                       fiber.scheduler - Fiber 857 'anynet_connection' (parent: 1) terminated.
+   info 2026-08-03 08:22:24.001       back   ctrl  30334 19240206                   app.backend_session - Stopping session.
+warning 2026-08-03 08:22:24.001       lsvc   main    980   8273  865                      app.service - block_input pckt received on unauthorized svc!
+   info 2026-08-03 08:22:24.002       back   main  30334 19240149                    app.input_injector - release_keys mod keys up
+   info 2026-08-03 08:22:24.004       back   timr  30334 19240719          base.signal.local.timer_impl - Timer wants to quit.
+   info 2026-08-03 08:22:24.004       back   ctrl  30334 19240206                   app.backend_session - Session stopped.
+   info 2026-08-03 08:22:24.005       back   ctrl  30334 19240206                       mac_app.backend - Deleting session..
+   info 2026-08-03 08:22:24.005       back   ctrl  30334 19240206                   app.backend_session - Destroying.
+   info 2026-08-03 08:22:24.005       back   ctrl  30334 19240206                   app.backend_session - Destroyed.
+   info 2026-08-03 08:22:24.006       back   timr  30334 19240219          base.signal.local.timer_impl - Timer wants to quit.
+warning 2026-08-03 08:22:24.006       lsvc   main    980   8273  865                      app.service - block_input pckt received on unauthorized svc!
+   info 2026-08-03 08:22:24.006       back   timr  30334 19240218          base.signal.local.timer_impl - Timer wants to quit.
+   info 2026-08-03 08:22:24.006       back   ctrl  30334 19240206              base.prot.job_dispatcher - 0 undelivered packets.
+   info 2026-08-03 08:22:24.006       back   timr  30334 19240217          base.signal.local.timer_impl - Timer wants to quit.
+   info 2026-08-03 08:22:24.006       back   ctrl  30334 19240206                       mac_app.backend - Session count: 0
+   info 2026-08-03 08:22:24.006       back   ctrl  30334 19240206                       mac_app.backend - Initiating shutdown.
+   info 2026-08-03 08:22:24.006       back   ctrl  30334 19240206                       mac_app.backend - Backend is shutting down.
+   info 2026-08-03 08:22:24.007       back   ctrl  30334 19240206                    app.tunnel_ft_comp - Stopping file component.
+   info 2026-08-03 08:22:24.007       back   ctrl  30334 19240206                    desk_rt.cg_capture - Capture stopped.
+   info 2026-08-03 08:22:24.007       lsvc   main    980   8273    1                      app.service - Process stop: 30334.
+   info 2026-08-03 08:22:24.014       back   ctrl  30334 19240206                       mac_app.backend - Backend has been stopped.
+   info 2026-08-03 08:22:24.014       lsvc   main    980   8273  865                      app.service - IPC socket closed.
+   info 2026-08-03 08:22:24.019       back   main  30334 19240149                           AppDelegate - Termination request received
+   info 2026-08-03 08:22:24.019       back   main  30334 19240149                           AppDelegate - Normal termination (0).
+   info 2026-08-03 08:22:24.019       lsvc   main    980   8273  865                      app.service - Fiber exit (ipc).
+   info 2026-08-03 08:22:24.019       lsvc   main    980   8273                       fiber.scheduler - Fiber 865 'ipc_connection' (parent: 1) terminated.
+   info 2026-08-03 08:22:24.020       back   main  30334 19240149                       mac_app.backend - Stopping the backend.
+   info 2026-08-03 08:22:24.020       back   ctrl  30334 19240206                       mac_app.backend - Backend is shutting down.
+   info 2026-08-03 08:22:24.020       back   ctrl  30334 19240206                    app.tunnel_ft_comp - Stopping file component.
+   info 2026-08-03 08:22:24.020       back   ctrl  30334 19240206                       mac_app.backend - Backend has been stopped.
+   info 2026-08-03 08:22:31.106       lsvc   main    980   8273  862           anynet.punch_connector - [202.62.104.203:9538] Connect failed (result_timeout)).
+   info 2026-08-03 08:22:31.107       lsvc   main    980   8273  861           anynet.punch_connector - [192.168.100.143:7070] Connection failed (result_timeout).
+   info 2026-08-03 08:22:31.107       lsvc   main    980   8273                       fiber.scheduler - Fiber 861 'tcp_connect' (parent: 860) terminated.
+   info 2026-08-03 08:22:31.107       lsvc   main    980   8273  863           anynet.punch_connector - [202.62.104.203:7070] Connection failed (result_timeout).
+   info 2026-08-03 08:22:31.108       lsvc   main    980   8273                       fiber.scheduler - Fiber 863 'tcp_connect' (parent: 860) terminated.
+   info 2026-08-03 08:22:31.357       lsvc   main    980   8273  862           anynet.punch_connector - [202.62.104.203:9538] Connecting (lport 63479, attempt 1).
+   info 2026-08-03 08:22:46.362       lsvc   main    980   8273  862           anynet.punch_connector - [202.62.104.203:9538] Connect failed (result_timeout)).
+   info 2026-08-03 08:22:46.617       lsvc   main    980   8273  862           anynet.punch_connector - [202.62.104.203:9538] Connecting (lport 63479, attempt 2).
+   info 2026-08-03 08:22:53.988       lsvc   main    980   8273                       fiber.scheduler - Fiber 8 'connection_mgr' requested quit of fiber 859 'managed_client_conn'.
+  error 2026-08-03 08:22:53.989       lsvc   main    980   8273  859       anynet.managed_client_conn - Received quit during connect.
+   info 2026-08-03 08:22:53.989       lsvc   main    980   8273  859            anynet.connection_mgr - Forcing cleanup.
+   info 2026-08-03 08:22:53.989       lsvc   main    980   8273  859       anynet.managed_client_conn - Managed client connection failed.
+   info 2026-08-03 08:22:53.989       lsvc   main    980   8273                       fiber.scheduler - Fiber 859 'managed_client_conn' requested quit of fiber 860 (parent: 859 'managed_client_conn').
+   info 2026-08-03 08:22:53.989       lsvc   main    980   8273  860           anynet.punch_connector - Connect aborted.
+   info 2026-08-03 08:22:53.989       lsvc   main    980   8273                       fiber.scheduler - Fiber 860 (parent: 859 'managed_client_conn') requested quit of fiber 862 'tcp_punch' (parent: 860).
+   info 2026-08-03 08:22:53.989       lsvc   main    980   8273  862           anynet.punch_connector - Received quit.
+   info 2026-08-03 08:22:53.989       lsvc   main    980   8273                       fiber.scheduler - Fiber 862 'tcp_punch' (parent: 860) terminated.
+   info 2026-08-03 08:22:53.989       lsvc   main    980   8273                       fiber.scheduler - Fiber 860 (parent: 859 'managed_client_conn') terminated.
+   info 2026-08-03 08:22:53.989       lsvc   main    980   8273                       fiber.scheduler - Fiber 859 'managed_client_conn' terminated.
+   info 2026-08-03 08:22:53.989       lsvc   main    980   8273    8            anynet.connection_mgr - Cleaned up 1/1 managed client connections.
+   info 2026-08-03 09:46:25.870       ctrl   wrk1    981   8970                       mac_app.control - Received new license info. (free-1, 33).
+   info 2026-08-03 09:46:25.870      front   wrk1   3117  12087                                   sif - Updating license info.
+   info 2026-08-03 09:46:25.870      front   wrk1   3117  12087                                   sif - License info updated: free-1
+   info 2026-08-03 09:46:25.870      front   wrk1   3117  12087                   anymessage.provider - License changed. Requesting messages update.
+  error 2026-08-03 09:46:25.892      front   main   3117  11873         mac_app.helper_tool_interface - Global files not found.
+   info 2026-08-03 09:46:25.894      front   main   3117  11873          base.data.config_application - Adding GPO defaults layer.
+   info 2026-08-03 09:46:25.896      front   main   3117  11873                               app.mdm - Loaded 0/665 MDM defaults.
+   info 2026-08-03 09:46:25.896      front   main   3117  11873          base.data.config_application - Adding GPO overrides layer.
+   info 2026-08-03 09:46:25.898      front   main   3117  11873                               app.mdm - Loaded 0/665 MDM overrides.
+   info 2026-08-03 09:46:25.901      front   main   3117  11873          base.data.config_application - Adding GPO defaults layer.
+   info 2026-08-03 09:46:25.903      front   main   3117  11873                               app.mdm - Loaded 0/665 MDM defaults.
+   info 2026-08-03 09:46:25.903      front   main   3117  11873          base.data.config_application - Adding GPO overrides layer.
+   info 2026-08-03 09:46:25.905      front   main   3117  11873                               app.mdm - Loaded 0/665 MDM overrides.
+  error 2026-08-03 14:25:11.904       lsvc    dns    980 19571751                   anynet.dns_resolver - DNS name "crl.anydesk.com" couldn't be resolved (8).
+  error 2026-08-03 14:25:11.934       lsvc   main    980   8273    7              anynet.dns_resolver - DNS name "crl.anydesk.com" couldn't be resolved (errno_8, result_invalid_address).
+   info 2026-08-03 14:38:48.044       lsvc   main    980   8273                       fiber.scheduler - Fiber 387 'main_relay_conn' requested quit of fiber 811.
+   info 2026-08-03 14:38:48.044       lsvc   main    980   8273  811                      fiber.fiber - Received quit.
+   info 2026-08-03 14:38:48.044       lsvc   main    980   8273                       fiber.scheduler - Fiber 811 terminated.
+   info 2026-08-03 14:38:48.045       lsvc   main    980   8273    1                   monitoring_svc - Connected: 0
+   info 2026-08-03 14:38:48.045       lsvc   main    980   8273    1                     assembly_svc - set_relay_connected(0)
+warning 2026-08-03 14:38:48.045       lsvc   main    980   8273    1                      anytime_svc - set_relay_connected(0)
+   info 2026-08-03 14:38:48.046       lsvc   main    980   8273   23                      app.service - 5 Unexpected: disconnect_msg_t.
+   info 2026-08-03 14:38:48.046       lsvc   main    980   8273                       fiber.scheduler - Fiber 387 'main_relay_conn' requested quit of fiber 810.
+   info 2026-08-03 14:38:48.046       lsvc   main    980   8273  810                      fiber.fiber - Received quit.
+   info 2026-08-03 14:38:48.046       lsvc   main    980   8273                       fiber.scheduler - Fiber 810 terminated.
+   info 2026-08-03 14:38:48.049       lsvc   main    980   8273  387                  fiber.scheduler - Spawning child fiber 866 'relay_connector' (parent: 387 'main_relay_conn').
+   info 2026-08-03 14:38:48.050       lsvc   main    980   8273  866           anynet.relay_connector - Relay connector started.
+   info 2026-08-03 14:38:48.050       lsvc   main    980   8273  866           anynet.relay_connector - Start proxy search.
+   info 2026-08-03 14:38:48.051       lsvc   main    980   8273  866           anynet.relay_connector - Connecting to relay relay-718d52e6.net.anydesk.com (1/2)
+   info 2026-08-03 14:38:48.051       lsvc   main    980   8273  866           anynet.relay_connector - Skipping connect method connect_proxy_443 (1/6) (no proxy found)
+   info 2026-08-03 14:38:48.051       lsvc   main    980   8273  866           anynet.relay_connector - Skipping connect method connect_proxy_80 (2/6) (no proxy found)
+   info 2026-08-03 14:38:48.051       lsvc   main    980   8273  866           anynet.relay_connector - Skipping connect method socks_proxy_443 (3/6) (no proxy found)
+  error 2026-08-03 14:38:48.055       lsvc   main    980   8273   16                   anynet_service - Relay connection state changed: Disconnected.
+   info 2026-08-03 14:38:48.106       lsvc   main    980   8273  866           anynet.relay_connector - Using IPv4: 15.235.229.155
+   info 2026-08-03 14:38:48.157       lsvc   main    980   8273  866                  fiber.scheduler - Spawning root fiber 867.
+   info 2026-08-03 14:38:48.219       lsvc   main    980   8273  866           anynet.relay_connector - Cipher: TLS_AES_256_GCM_SHA384 TLSv1.3 Kx=any Au=any Enc=AESGCM(256) Mac=AEAD
+   info 2026-08-03 14:38:48.219       lsvc   main    980   8273  866                  fiber.scheduler - Spawning root fiber 868.
+   info 2026-08-03 14:38:48.276       lsvc   main    980   8273  866                        handshake - Using protocol version 3.
+   info 2026-08-03 14:38:48.596       lsvc   main    980   8273                       fiber.scheduler - Fiber 866 'relay_connector' (parent: 387 'main_relay_conn') requested quit of fiber 868.
+   info 2026-08-03 14:38:48.596       lsvc   main    980   8273  868                      fiber.fiber - Received quit.
+   info 2026-08-03 14:38:48.597       lsvc   main    980   8273                       fiber.scheduler - Fiber 868 terminated.
+   info 2026-08-03 14:38:48.597       lsvc   main    980   8273                       fiber.scheduler - Fiber 866 'relay_connector' (parent: 387 'main_relay_conn') requested quit of fiber 867.
+   info 2026-08-03 14:38:48.597       lsvc   main    980   8273  867                      fiber.fiber - Received quit.
+   info 2026-08-03 14:38:48.597       lsvc   main    980   8273                       fiber.scheduler - Fiber 867 terminated.
+   info 2026-08-03 14:38:48.597       lsvc   main    980   8273  866           anynet.relay_connector - Connection terminated: anynet_relay_full
+   info 2026-08-03 14:38:48.597       lsvc   main    980   8273  866           anynet.relay_connector - Received a new server list (5 servers)
+   info 2026-08-03 14:38:48.597       lsvc   main    980   8273  866           anynet.relay_connector - Connecting to relay relay-24f591c7.net.anydesk.com (1/5)
+   info 2026-08-03 14:38:48.597       lsvc   main    980   8273  866           anynet.relay_connector - Skipping connect method connect_proxy_443 (1/6) (no proxy found)
+   info 2026-08-03 14:38:48.597       lsvc   main    980   8273  866           anynet.relay_connector - Skipping connect method connect_proxy_80 (2/6) (no proxy found)
+   info 2026-08-03 14:38:48.597       lsvc   main    980   8273  866           anynet.relay_connector - Skipping connect method socks_proxy_443 (3/6) (no proxy found)
+   info 2026-08-03 14:38:48.655       lsvc   main    980   8273  866           anynet.relay_connector - Using IPv4: 15.235.229.146
+   info 2026-08-03 14:38:48.702       lsvc   main    980   8273  866                  fiber.scheduler - Spawning root fiber 869.
+   info 2026-08-03 14:38:48.754       lsvc   main    980   8273  866           anynet.relay_connector - Cipher: TLS_AES_256_GCM_SHA384 TLSv1.3 Kx=any Au=any Enc=AESGCM(256) Mac=AEAD
+   info 2026-08-03 14:38:48.754       lsvc   main    980   8273  866                  fiber.scheduler - Spawning root fiber 870.
+   info 2026-08-03 14:38:48.797       lsvc   main    980   8273  866                        handshake - Using protocol version 3.
+   info 2026-08-03 14:38:49.062       lsvc   main    980   8273  866           anynet.relay_connector - Connection established.
+   info 2026-08-03 14:38:49.063       lsvc   main    980   8273  866           anynet.relay_connector - Relay connector stopped.
+   info 2026-08-03 14:38:49.063       lsvc   main    980   8273                       fiber.scheduler - Fiber 866 'relay_connector' (parent: 387 'main_relay_conn') terminated.
+   info 2026-08-03 14:38:49.069       lsvc   main    980   8273  387           anynet.main_relay_conn - Network ID: main
+   info 2026-08-03 14:38:49.070       lsvc   main    980   8273  387                anynet.relay_conn - External address: 103.17.149.146:65475.
+   info 2026-08-03 14:38:49.071       lsvc   main    980   8273  387           anynet.main_relay_conn - Main relay ID: 24f591c7
+   info 2026-08-03 14:38:49.170       lsvc   main    980   8273  387           anynet.main_relay_conn - Detected 2 new networks.
+   info 2026-08-03 14:38:49.171       lsvc   main    980   8273    1                   monitoring_svc - Connected: 1
+   info 2026-08-03 14:38:49.171       lsvc   main    980   8273    1                     assembly_svc - set_relay_connected(1)
+warning 2026-08-03 14:38:49.171       lsvc   main    980   8273    1                      anytime_svc - set_relay_connected(1)
+   info 2026-08-03 14:38:49.173       lsvc   main    980   8273   16                   anynet_service - Relay connection state changed: Connected.
+   info 2026-08-03 14:38:49.173       lsvc   main    980   8273   23                      app.service - 5 Unexpected: license_msg_t.
+   info 2026-08-03 14:38:49.173       lsvc   main    980   8273   23                      app.service - 5 Unexpected: connect_msg_t.
+   info 2026-08-03 14:38:49.173       lsvc   main    980   8273   23                      app.service - 5 Unexpected: user_data_msg_t.
+   info 2026-08-03 14:38:49.173       lsvc   main    980   8273    8            anynet.connection_mgr - Main relay connection established.
+   info 2026-08-03 14:38:49.173       lsvc   main    980   8273    8            anynet.connection_mgr - New user data. Client-ID: 1529167950.
+   info 2026-08-03 14:38:49.175       lsvc   main    980   8273    6                        device_id - Requesting validation.
+   info 2026-08-03 14:38:49.425       lsvc   main    980   8273    6                        device_id - Device ID valid.
+   info 2026-08-03 14:38:49.470       lsvc   main    980   8273    1                     assembly_svc - set_relay_connected(1)
+warning 2026-08-03 14:38:49.470       lsvc   main    980   8273    1                      anytime_svc - set_relay_connected(1)
+   info 2026-08-03 14:38:49.473      front   wrk1   3117  12087            app.session_queue_frontend - Received service ready

@@ -1,5 +1,5 @@
 server:
-  port: 12104                                    # 服务端口配置 ✅
+  port: 12112                                   # 服务端口配置 ✅
   servlet:
     encoding:
       enabled: true       # 启用请求/响应的字符编码支持 ✅
@@ -7,31 +7,69 @@ server:
       charset: UTF-8      # 设置字符编码为 UTF-8 ✅
 
 spring:
+  config:
+    import: "optional:file:.env[.properties]"
   application:
-    name: mic-spring-ai-0004-chat-client
-
+    name: mic-spring-ai-0012-chat-client-observability
+  # ====== 最新版本 Micrometer Tracing + Zipkin 配置 ======
+  # ====== 修正后的 Spring Boot 3 链路追踪配置 ======
+  management:
+    tracing:
+      sampling:
+        probability: 1.0  # 100% 采样率（必须修改为 management 前缀才能生效）
+      propagation:
+        type: B3
+    zipkin:
+      tracing:
+        # Spring Boot 3 中 Zipkin 的配置方式变了，需要写完整端点 URL
+        endpoint: https://demo.zipkin.io/api/v2/spans
+#        endpoint: http://localhost:9411/api/v2/spans
+#  micrometer:
+#    tracing:
+#      enabled: true
+#      # 使用 B3 协议（兼容旧版和标准的 16 位 ID）
+#      propagation:
+#        type: B3
+#      # 采样率 100%
+#      sampling:
+#        probability: 1.0
+#  zipkin:
+#    # 官方演示服务器
+#    base-url: https://demo.zipkin.io
+#    # 发送类型为 Web
+#    sender:
+#      type: web
   ai:
-    openai:
-      # 推荐使用环境变量，更安全
-      api-key: sk-d9acf81847274fcfb8cbfe0f20051ffd  # 推荐使用环境变量，更安全
-      # 如果使用官方 API
-      base-url: https://api.deepseek.com
-      # 如果使用代理或中转服务，修改为对应地址
-      # base-url: https://your-proxy-domain.com/v1
+    # ================================================================
+    # 1. Ollama 本地模型（默认）
+    # ================================================================
+    ollama:
+      base-url: http://localhost:11434
       chat:
         options:
-          # 可选的模型：
-          # - gpt-4o (最新旗舰)
-          # - gpt-4-turbo
-          # - gpt-4
-          # - gpt-3.5-turbo
-          model: deepseek-chat
-          # 控制回答的随机性 (0-2)
+          # ✅ 换成本地支持 Tool Calling 的模型
+          model: llama3.2:3b
           temperature: 0.7
-          # 可选：控制回答的多样性
-          # top-p: 0.9
-          # 可选：最大输出 token 数
-          # max-tokens: 2048
-#    chat:
-#        client:
-#          enabled: false
+          # DeepSeek R1 推荐配置
+          num-predict: 2048
+          num-ctx: 8192
+    # ================================================================
+    # 2. DeepSeek 云端模型
+    # ================================================================
+    openai:
+      api-key: ${DEEPSEEK_API_KEY:not-configured}
+      base-url: https://api.deepseek.com
+      chat:
+        options:
+          model: deepseek-chat
+          temperature: 0.7
+          max-tokens: 2048
+
+
+
+logging:
+  # 指定日志文件存放的绝对路径或相对路径 (配合配置中的 ${LOG_PATH:-./logs})
+  file:
+    path: ./logs
+  # 如果需要指定配置文件，也可以写，但SpringBoot会自动找 resources/logback-spring.xml
+  # config: classpath:logback-spring.xml
