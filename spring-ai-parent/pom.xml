@@ -197,6 +197,7 @@
 
     <build>
         <pluginManagement>
+            <!-- 1. Spring Boot 插件 -->
             <plugins>
                 <plugin>
                     <groupId>org.springframework.boot</groupId>
@@ -205,5 +206,19 @@
                 </plugin>
             </plugins>
         </pluginManagement>
+
+        <!-- 👈 关键：在根项目的 build 中全局声明 plugins，让所有子模块强制继承 -->
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.13.0</version> <!-- 适配 JDK 25 的编译器版本 -->
+                <configuration>
+                    <source>${maven.compiler.source}</source>
+                    <target>${maven.compiler.target}</target>
+                    <parameters>true</parameters> <!-- 🔑 核心：保留方法参数名，解决 Spring AI 工具参数变成 arg0 的问题 -->
+                </configuration>
+            </plugin>
+        </plugins>
     </build>
 </project>

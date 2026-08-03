@@ -1,5 +1,5 @@
 server:
-  port: 12104                                    # 服务端口配置 ✅
+  port: 12110                                  # 服务端口配置 ✅
   servlet:
     encoding:
       enabled: true       # 启用请求/响应的字符编码支持 ✅
@@ -7,31 +7,33 @@ server:
       charset: UTF-8      # 设置字符编码为 UTF-8 ✅
 
 spring:
+  config:
+    import: "optional:file:.env[.properties]"
   application:
-    name: mic-spring-ai-0004-chat-client
+    name: mic-spring-ai-0010-chat-client-tools
 
   ai:
-    openai:
-      # 推荐使用环境变量，更安全
-      api-key: sk-d9acf81847274fcfb8cbfe0f20051ffd  # 推荐使用环境变量，更安全
-      # 如果使用官方 API
-      base-url: https://api.deepseek.com
-      # 如果使用代理或中转服务，修改为对应地址
-      # base-url: https://your-proxy-domain.com/v1
+    # ================================================================
+    # 1. Ollama 本地模型（默认）
+    # ================================================================
+    ollama:
+      base-url: http://localhost:11434
       chat:
         options:
-          # 可选的模型：
-          # - gpt-4o (最新旗舰)
-          # - gpt-4-turbo
-          # - gpt-4
-          # - gpt-3.5-turbo
-          model: deepseek-chat
-          # 控制回答的随机性 (0-2)
+          # ✅ 换成本地支持 Tool Calling 的模型
+          model: llama3.2:3b
           temperature: 0.7
-          # 可选：控制回答的多样性
-          # top-p: 0.9
-          # 可选：最大输出 token 数
-          # max-tokens: 2048
-#    chat:
-#        client:
-#          enabled: false
+          # DeepSeek R1 推荐配置
+          num-predict: 2048
+          num-ctx: 8192
+    # ================================================================
+    # 2. DeepSeek 云端模型
+    # ================================================================
+    openai:
+      api-key: ${DEEPSEEK_API_KEY:not-configured}
+      base-url: https://api.deepseek.com
+      chat:
+        options:
+          model: deepseek-chat
+          temperature: 0.7
+          max-tokens: 2048
