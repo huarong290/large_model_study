@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <!-- ============================================== -->
+    <!-- 1. 引入 Spring Boot 默认的 Logback 基础配置     -->
+    <!-- ============================================== -->
+    <!-- 包含 Spring Boot 默认的 CONSOLE 和 FILE Appender 定义，以及各种 Profile 的环境变量支持 -->
+    <include resource="org/springframework/boot/logging/logback/base.xml"/>
+
+    <!-- ============================================== -->
+    <!-- 2. 定义全局变量，方便统一管理                   -->
+    <!-- ============================================== -->
+    <!-- 从 application.yml 获取应用名，如果取不到则默认 application -->
+    <springProperty scope="context" name="APP_NAME" source="spring.application.name" defaultValue="application"/>
+    <!-- 日志存放根路径，支持通过系统环境变量 LOG_PATH 覆盖 -->
+    <property name="LOG_HOME" value="${LOG_PATH:-./logs}" />
+
+    <!-- ============================================== -->
+    <!-- 3. 控制台日志格式（环境隔离）                   -->
+    <!-- ============================================== -->
+    <!-- 【开发/本地环境】带高亮颜色，带官方 TraceId -->
+    <springProfile name="dev,local,default">
+        <property name="CONSOLE_LOG_PATTERN"
+                  value="%d{yyyy-MM-dd HH:mm:ss.SSS} %highlight(%-5level) [%thread] %cyan([%X{traceId:-NONE}]) %logger{36} - %msg%n"/>
+    </springProfile>
+
+    <!-- 【生产/测试环境】去掉高亮颜色，适合 ELK/日志中心，无颜色特殊字符 -->
+    <springProfile name="prod,test">
+        <property name="CONSOLE_LOG_PATTERN"
+                  value="%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [%thread] [%X{traceId:-NONE}] %logger{36} - %msg%n"/>
+    </springProfile>
+
+    <!-- ============================================== -->
+    <!-- 4. 生产级文件输出 Appender（按日期、按大小切割） -->
+    <!-- ============================================== -->
+    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <!-- 当前正在写入的日志文件 -->
+        <file>${LOG_HOME}/${APP_NAME}.log</file>
+
+        <!-- 滚动策略：同时基于日期和文件大小 -->
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <!-- 归档日志文件名格式：logs/应用名.2026-08-03.0.log.gz -->
+            <fileNamePattern>${LOG_HOME}/${APP_NAME}.%d{yyyy-MM-dd}.%i.log.gz</fileNamePattern>
+            <!-- 单个日志文件最大大小（超过 100MB 自动切割生成新文件） -->
+            <maxFileSize>100MB</maxFileSize>
+            <!-- 历史日志最多保留 30 天 -->
+            <maxHistory>30</maxHistory>
+            <!-- 所有归档日志总大小上限，超出后自动删除最早的文件（防止磁盘写满） -->
+            <totalSizeCap>2GB</totalSizeCap>
+        </rollingPolicy>
+
+        <!-- 日志格式 -->
+        <encoder>
+            <!-- 同样带上官方 TraceId，方便文件检索 -->
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [%thread] [%X{traceId:-NONE}] %logger{50} - %msg%n</pattern>
+            <!-- 解决中文乱码问题 -->
+            <charset>UTF-8</charset>
+        </encoder>
+    </appender>
+
+    <!-- ============================================== -->
+    <!-- 5. 包级日志级别控制（精准控制不刷屏）           -->
+    <!-- ============================================== -->
+    <!-- 开启自己业务代码的 DEBUG 级别，方便日常调试拦截器和逻辑 -->
+    <logger name="com.ai.study" level="DEBUG" additivity="false">
+        <appender-ref ref="CONSOLE"/>
+        <appender-ref ref="FILE"/>
+    </logger>
+
+    <!-- 将 Spring 框架及其底层的日志调整为 WARN，极大减少控制台无效噪音 -->
+    <logger name="org.springframework" level="WARN" additivity="false">
+        <appender-ref ref="CONSOLE"/>
+        <appender-ref ref="FILE"/>
+    </logger>
+
+    <!-- ============================================== -->
+    <!-- 6. 全局根节点配置                             -->
+    <!-- ============================================== -->
+    <!-- 默认级别为 INFO，同时将自定义的 FILE 附加器挂载到 Root -->
+    <root level="INFO">
+        <appender-ref ref="FILE"/>
+    </root>
+</configuration>

@@ -1,46 +1,61 @@
 server:
-  port: 12104                                    # 服务端口配置 ✅
+  port: 12113                                 # 服务端口配置 ✅
   servlet:
     encoding:
       enabled: true       # 启用请求/响应的字符编码支持 ✅
       force: true         # 强制使用指定编码（覆盖客户端声明的编码） ✅
       charset: UTF-8      # 设置字符编码为 UTF-8 ✅
 
-
 spring:
   config:
     import: "optional:file:.env[.properties]"
   application:
-    name: mic-spring-ai-0013-chat-client-multi-model                # 应用名称
-
+    name: mic-spring-ai-0013-chat-client-multi-model
+  # ====== 最新版本 Micrometer Tracing + Zipkin 配置 ======
+  # ====== 修正后的 Spring Boot 3 链路追踪配置 ======
+  management:
+    tracing:
+      sampling:
+        probability: 1.0  # 100% 采样率（必须修改为 management 前缀才能生效）
+      propagation:
+        type: B3
+    zipkin:
+      tracing:
+        # Spring Boot 3 中 Zipkin 的配置方式变了，需要写完整端点 URL
+        endpoint: https://demo.zipkin.io/api/v2/spans
+  #        endpoint: http://localhost:9411/api/v2/spans
   ai:
-    # =================================================================
-    # 1. Ollama 本地开源大模型配置（完全本地化运行，保障数据与隐私安全）
-    # =================================================================
+    # ================================================================
+    # 1. Ollama 本地模型（默认）
+    # ================================================================
     ollama:
-      base-url: http://localhost:11434                    # Ollama 本地服务监听地址
+      base-url: http://localhost:11434
       chat:
         options:
-          model: qwen2.5-coder:14b                                 # 本地运行的模型名称（如 qwen2.5-coder:14b、deepseek-r1 等）
-          temperature: 0.7                                # 控制回答随机性
-    # =================================================================
-    # 2. DeepSeek 大模型配置（通过 Spring AI 的 OpenAI 兼容接口接入）
-    # =================================================================
+          # ✅ 换成本地支持 Tool Calling 的模型
+          model: llama3.2:3b
+          temperature: 0.7
+          # DeepSeek R1 推荐配置
+          num-predict: 2048
+          num-ctx: 8192
+    # ================================================================
+    # 2. DeepSeek 云端模型
+    # ================================================================
     openai:
-      api-key: ${DEEPSEEK_API_KEY}  # 强烈建议使用环境变量注入，生产环境绝对禁止明文硬编码
-      base-url: https://api.deepseek.com                  # DeepSeek 官方 API 基础路径
+      api-key: ${DEEPSEEK_API_KEY:not-configured}
+      base-url: https://api.deepseek.com
       chat:
         options:
-          model: deepseek-chat                            # 指定调用的对话模型名称
-          temperature: 0.7                                # 控制回答随机性（取值 0.0-2.0，值越小回答越严谨确定，越大越具发散性）
-# =================================================================
-# 3. Google Gemini 大模型配置（通过 Google AI Studio 的 OpenAI 兼容接口接入）
-# =================================================================
-gemini:
-  api-key: ${GEMINI_API_KEY}          # 你的 Google AI Studio Key
-  base-url: https://generativelanguage.googleapis.com/v1beta/openai/ # OpenAI 兼容端点
-  chat:
-    options:
-      model: gemini-2.0-flash                             # 推荐使用的 Gemini 模型
-      temperature: 0.7
+          model: deepseek-chat
+          temperature: 0.7
+          max-tokens: 2048
+
+
+
+logging:
+  # 指定日志文件存放的绝对路径或相对路径 (配合配置中的 ${LOG_PATH:-./logs})
+  file:
+    path: ./logs
+  # 如果需要指定配置文件，也可以写，但SpringBoot会自动找 resources/logback-spring.xml
+  # config: classpath:logback-spring.xml
 
