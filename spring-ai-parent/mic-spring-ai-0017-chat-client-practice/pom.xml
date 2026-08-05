@@ -12,9 +12,119 @@
     <artifactId>mic-spring-ai-0017-chat-client-practice</artifactId>
 
     <properties>
-        <maven.compiler.source>26</maven.compiler.source>
-        <maven.compiler.target>26</maven.compiler.target>
+        <maven.compiler.source>25</maven.compiler.source>
+        <maven.compiler.target>25</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
+
+    <dependencies>
+        <!-- ================================================================= -->
+        <!-- 一、 Spring Boot 基础底座与测试模块                                   -->
+        <!-- ================================================================= -->
+        <!-- Web Starter：提供 Spring MVC、RESTful API 及内嵌 Web 容器支持 -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+
+        <!-- Test Starter：提供 JUnit 5、Spring Test、Mockito 等单元及集成测试支持 -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <!--  Redis 连接支持 -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-redis</artifactId>
+        </dependency>
+
+        <!-- ============================================================ -->
+        <!-- ：Spring Boot Actuator（必须加，才能触发 Tracing） -->
+        <!-- ============================================================ -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
+        <!-- ================================================================= -->
+        <!-- 二、 Spring AI 大模型集成模块                                       -->
+        <!-- ================================================================= -->
+        <!-- OpenAI Starter：支持 OpenAI 官方 API 及所有兼容 OpenAI 规范的 API（如 DeepSeek 等） -->
+        <dependency>
+            <groupId>org.springframework.ai</groupId>
+            <artifactId>spring-ai-starter-model-openai</artifactId>
+        </dependency>
+
+        <!-- Ollama Starter：支持本地部署开源大模型（如 Llama、DeepSeek 本地运行等，保障数据隐私） -->
+        <dependency>
+            <groupId>org.springframework.ai</groupId>
+            <artifactId>spring-ai-starter-model-ollama</artifactId>
+        </dependency>
+
+        <!-- Google Vertex AI Gemini Starter：支持 Google Gemini 多模态大模型接入 -->
+        <!--        <dependency>-->
+        <!--            <groupId>org.springframework.ai</groupId>-->
+        <!--            &lt;!&ndash; 官方 artifactId 在 vertex 和 ai 之间包含连字符 &ndash;&gt;-->
+        <!--            <artifactId>spring-ai-starter-model-vertex-ai-gemini</artifactId>-->
+        <!--        </dependency>-->
+
+        <!-- ================================================================= -->
+        <!-- 三、 开发辅助与效率工具                                           -->
+        <!-- ================================================================= -->
+        <!-- Lombok：通过注解在编译期自动生成 Getter、Setter、ToString 等，减少样板代码 -->
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <optional>true</optional>
+        </dependency>
+
+        <!-- Jackson（用于 JSON 处理） -->
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+        </dependency>
+
+        <!-- HuTool -->
+        <dependency>
+            <groupId>cn.hutool</groupId>
+            <artifactId>hutool-all</artifactId>
+        </dependency>
+        <!-- ================================================================= -->
+        <!-- 四、 开发辅助与效率工具                                           -->
+        <!-- ================================================================= -->
+        <!--  Micrometer 链路追踪核心库 (桥接 Brave) -->
+        <dependency>
+            <groupId>io.micrometer</groupId>
+            <artifactId>micrometer-tracing-bridge-brave</artifactId>
+        </dependency>
+
+        <!--  Zipkin 数据上报客户端 (将数据发送给 Zipkin 服务器) -->
+        <dependency>
+            <groupId>io.zipkin.reporter2</groupId>
+            <artifactId>zipkin-reporter-brave</artifactId>
+        </dependency>
+
+        <!--  (可选但非常推荐) 自动通过 HTTP Header 传播 TraceId -->
+        <dependency>
+            <groupId>io.micrometer</groupId>
+            <artifactId>micrometer-tracing</artifactId>
+        </dependency>
+        <!-- ================================================================= -->
+        <!-- 五、 核心缓存组件                                         -->
+        <!-- ================================================================= -->
+        <!--  Caffeine 本地缓存 -->
+        <dependency>
+            <groupId>com.github.ben-manes.caffeine</groupId>
+            <artifactId>caffeine</artifactId>
+        </dependency>
+
+        <!-- Spring 缓存抽象注解 (@Cacheable, @CacheEvict 等支持) -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-cache</artifactId>
+        </dependency>
+    </dependencies>
+
 
 </project>

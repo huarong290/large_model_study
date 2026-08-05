@@ -1,0 +1,131 @@
+# ================================================================
+# 1. 服务基础配置 (Server)
+# ================================================================
+server:
+  port: 12117
+  servlet:
+    encoding:
+      enabled: true          # 启用请求/响应字符编码支持
+      force: true            # 强制覆盖客户端声明的编码
+      charset: UTF-8         # 统一使用 UTF-8 编码，防止乱码
+
+# ================================================================
+# 2. Spring 核心配置
+# ================================================================
+spring:
+  application:
+    name: mic-spring-ai-0017-chat-client-practice
+  config:
+    import: "optional:file:.env[.properties]"
+
+  # --------------------------------------------------------------
+  # 2.1 缓存配置（已由 MultiLevelCacheConfig 接管，开关受 practice.cache-enabled 控制）
+  # --------------------------------------------------------------
+  # cache:
+  #   type: none
+
+  # --------------------------------------------------------------
+  # 2.2 Redis 配置（哨兵模式）
+  # --------------------------------------------------------------
+  data:
+    redis:
+      timeout: 3000ms
+      password: ${REDIS_PASSWORD:123456}
+      database: 0
+      sentinel:
+        master: mymaster
+        nodes:
+          - 127.0.0.1:26379
+          - 127.0.0.1:26380
+          - 127.0.0.1:26381
+        password: 123456
+      lettuce:
+        pool:
+          max-active: 8
+          max-idle: 8
+          min-idle: 0
+          max-wait: -1ms
+
+  # --------------------------------------------------------------
+  # 2.3 Spring AI 模型配置
+  # --------------------------------------------------------------
+  ai:
+    # 1. Ollama 本地模型
+    ollama:
+      base-url: http://localhost:11434
+      chat:
+        options:
+          model: llama3.2:3b
+          temperature: 0.7
+          num-predict: 2048
+          num-ctx: 8192
+
+    # 2. DeepSeek 云端模型
+    openai:
+      api-key: ${DEEPSEEK_API_KEY:not-configured}
+      base-url: https://api.deepseek.com
+      chat:
+        options:
+          model: deepseek-chat
+          temperature: 0.7
+          max-tokens: 2048
+
+# ================================================================
+# 3. 日志配置
+# ================================================================
+logging:
+  file:
+    path: ./logs
+
+# ================================================================
+# 4. 安全配置
+# ================================================================
+security:
+  # 白名单路径
+  whitelist:
+    paths:
+      - /health
+      - /actuator
+      - /no-security
+  api-key:
+    enabled: true
+    header: X-API-Key
+    valid-keys:
+      - admin-key-123
+      - user-key-456
+      - test-key-789
+    # 拦截路径
+    path-patterns:
+      - /api/practice/*
+      - /api/security/*
+  rate-limit:
+    enabled: true
+    max-requests-per-minute: 10
+    max-requests-per-day: 100
+    # 拦截路径
+    path-patterns:
+      - /api/practice/*
+      - /api/security/*
+  sensitive-word:
+    enabled: true
+    words:
+      - 暴力
+      - 色情
+      - 赌博
+      - 毒品
+      - 敏感词1
+      - 敏感词2
+      - 敏感词3
+  content-audit:
+    enabled: true
+    block-sensitive-response: true
+
+# ================================================================
+# 5. 智能客服配置
+# ================================================================
+practice:
+  default-model: ollama
+  memory-enabled: true
+  max-messages: 10
+  cache-enabled: true
+  session-timeout-minutes: 30

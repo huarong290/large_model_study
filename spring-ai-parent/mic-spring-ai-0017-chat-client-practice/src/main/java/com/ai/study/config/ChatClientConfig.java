@@ -7,9 +7,11 @@ import org.springframework.ai.ollama.OllamaChatModel;
 import org.springframework.ai.openai.OpenAiChatModel;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
+import org.springframework.context.event.EventListener;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -78,24 +80,16 @@ public class ChatClientConfig {
         log.info("📋 模型注册表：{}", registry.keySet());
         return registry;
     }
-
-    /**
-     * 打印配置信息
-     * 注意：@Bean 方法不能返回 void，所以返回一个 String 或使用 @PostConstruct
-     * 方式1：返回一个字符串（推荐）
+    /**打印配置信息
+     * 替换原有的 @Bean 打印方式，改用标准应用就绪事件监听
      */
-    @Bean
-    public String printConfigInfo(
-            @Qualifier("ollamaChatClient") ChatClient ollamaChatClient,
-            @Qualifier("deepSeekChatClient") ChatClient deepSeekClient) {
+    @EventListener(ApplicationReadyEvent.class)
+    public void printConfigInfo() {
         log.info("========================================");
-        log.info("📋 安全控制模块配置完成");
+        log.info("📋 智能客服系统配置完成");
         log.info("========================================");
         log.info("✅ 模型1: Ollama（本地）- {}", ollamaModel);
         log.info("✅ 模型2: DeepSeek（云端）- {}", deepSeekModel);
         log.info("========================================");
-        log.info("🔐 安全措施：API Key 认证 + 限流控制 + 敏感词过滤 + 内容审核");
-        log.info("========================================");
-        return "ChatClient 配置完成";
     }
 }
