@@ -1,0 +1,154 @@
+# ================================================================
+# 1. 服务基础配置 (Server)
+# ================================================================
+server:
+  port: 12118
+  servlet:
+    encoding:
+      enabled: true          # 启用请求/响应字符编码支持
+      force: true            # 强制覆盖客户端声明的编码
+      charset: UTF-8         # 统一使用 UTF-8 编码，防止乱码
+
+# ================================================================
+# 2. Spring 核心配置
+# ================================================================
+spring:
+  application:
+    name: mic-spring-ai-0018-audio-transcription
+  config:
+    import: "optional:file:.env[.properties]"
+  # 文件上传配置
+  servlet:
+    multipart:
+      max-file-size: 100MB
+      max-request-size: 200MB
+
+  # --------------------------------------------------------------
+  # 2.1 Redis 配置（哨兵模式）
+  # --------------------------------------------------------------
+  data:
+    redis:
+      timeout: 3000ms
+      password: ${REDIS_PASSWORD:123456}
+      database: 0
+      sentinel:
+        master: mymaster
+        nodes:
+          - 127.0.0.1:26379
+          - 127.0.0.1:26380
+          - 127.0.0.1:26381
+        password: 123456
+      lettuce:
+        pool:
+          max-active: 8
+          max-idle: 8
+          min-idle: 0
+          max-wait: -1ms
+
+  # --------------------------------------------------------------
+  # 2.2 Spring AI 模型配置 (修改核心)
+  # --------------------------------------------------------------
+  ai:
+    # 1. Ollama 本地模型（用于本地对话/Embedding）
+    ollama:
+      base-url: http://localhost:11434
+      chat:
+        options:
+          model: llama3.2:3b
+          temperature: 0.7
+          num-predict: 2048
+          num-ctx: 8192
+
+    # 2. OpenAI 协议接口（语音转写指向本地 Whisper，文本模型指向 DeepSeek）
+    openai:
+      api-key: local-secret-key           # 本地 Whisper 服务校验的默认 Key
+      base-url: http://localhost:8001      # 默认地址指向本地部署的 Whisper 容器 (8001 端口)
+      # 音频转写配置（自动注入 OpenAiAudioTranscriptionModel）
+      audio:
+        transcription:
+          options:
+            model: whisper-1               # 本地 Whisper 模型名
+            response-format: json          # 返回格式：json / text / vtt / srt
+            temperature: 0.0
+
+      # 文本聊天配置（覆盖默认地址，单独指向 DeepSeek 云端）
+      chat:
+        api-key: ${DEEPSEEK_API_KEY:sk-xxx}
+        base-url: https://api.deepseek.com
+        options:
+          model: deepseek-chat
+          temperature: 0.7
+          max-tokens: 2048
+
+# ================================================================
+# 3. 日志配置
+# ================================================================
+logging:
+  file:
+    path: ./logs
+
+# ================================================================
+# 4. 安全配置
+# ================================================================
+security:
+  whitelist:
+    paths:
+      - /health
+      - /actuator
+      - /no-security
+  api-key:
+    enabled: true
+    header: X-API-Key
+    valid-keys:
+      - admin-key-123
+      - user-key-456
+      - test-key-789
+    path-patterns:
+      - /api/practice/*
+      - /api/security/*
+  rate-limit:
+    enabled: true
+    max-requests-per-minute: 10
+    max-requests-per-day: 100
+    path-patterns:
+      - /api/practice/*
+      - /api/security/*
+  sensitive-word:
+    enabled: true
+    words:
+      - 暴力
+      - 色情
+      - 赌博
+      - 毒品
+      - 敏感词1
+      - 敏感词2
+      - 敏感词3
+  content-audit:
+    enabled: true
+    block-sensitive-response: true
+
+# ================================================================
+# 5. 智能客服配置
+# ================================================================
+practice:
+  default-model: ollama
+  memory-enabled: true
+  max-messages: 10
+  cache-enabled: true
+  session-timeout-minutes: 30
+
+# ================================================================
+# 6. 自定义业务语音规则配置
+# ================================================================
+audio:
+  transcription:
+    default-language: zh
+    max-file-size: 25
+    supported-formats:
+      - mp3
+      - wav
+      - m4a
+      - flac
+      - ogg
+      - webm
+    include-timestamps: true
